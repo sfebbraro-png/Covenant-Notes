@@ -4,8 +4,6 @@ Options -Indexes
 RewriteEngine On
 RewriteRule ^sitemap\.xml$ /sitemap.php [L]
 
-# Send every visitor to https://covenantblog.us (the temp webspace-host URL is left alone).
-RewriteCond %{HTTP_HOST} ^(www\.)?covenantblog\.us$ [NC]
-RewriteCond %{HTTPS} !=on [OR]
-RewriteCond %{HTTP_HOST} ^www\. [NC]
-RewriteRule ^ https://covenantblog.us%{REQUEST_URI} [R=301,L]
+# covenantblog.us (root) redirects to www.covenantblog.us at the DNS/registrar level
+# (IONOS doesn't allow a CNAME at the apex). Do not redirect www -> root here,
+# or it will loop against that registrar-level redirect.
