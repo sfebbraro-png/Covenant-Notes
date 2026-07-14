@@ -1,0 +1,11 @@
+DirectoryIndex index.php
+Options -Indexes
+
+RewriteEngine On
+RewriteRule ^sitemap\.xml$ /sitemap.php [L]
+
+# Send every visitor to https://covenantblog.us (the temp webspace-host URL is left alone).
+RewriteCond %{HTTP_HOST} ^(www\.)?covenantblog\.us$ [NC]
+RewriteCond %{HTTPS} !=on [OR]
+RewriteCond %{HTTP_HOST} ^www\. [NC]
+RewriteRule ^ https://covenantblog.us%{REQUEST_URI} [R=301,L]
