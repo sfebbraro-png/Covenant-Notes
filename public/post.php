@@ -63,6 +63,7 @@ if (!$post || ($is_preview && !is_logged_in())) {
       <?php endif; ?>
       <a href="/#about">About</a>
       <a href="/#archive">Archive</a>
+      <a href="/desk/">Writing Desk</a>
     </nav>
   </div>
 </header>
