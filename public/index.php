@@ -53,7 +53,7 @@ $sub_error  = isset($_GET['sub_error']) ? $_GET['sub_error'] : '';
       <?php endif; ?>
       <a href="#about">About</a>
       <a href="#archive">Archive</a>
-      <a href="/desk/">Writing Desk</a>
+      <a class="desk" href="/desk/">Writing Desk</a>
     </nav>
   </div>
 </header>
