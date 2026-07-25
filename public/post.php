@@ -1,29 +1,25 @@
 <?php
 require_once __DIR__ . '/lib/bootstrap.php';
 
-$slug = isset($_GET['post']) ? $_GET['post'] : '';
-$stmt = db()->prepare('SELECT * FROM posts WHERE slug = ?');
+$slug = isset($_GET['post']) ? trim($_GET['post']) : '';
+$stmt = db()->prepare('SELECT * FROM posts WHERE slug = ? LIMIT 1');
 $stmt->execute(array($slug));
 $post = $stmt->fetch();
-
 $is_preview = $post && $post['status'] !== 'published';
-if (!$post || ($is_preview && !is_logged_in())) {
-    http_response_code(404);
-    $title = 'Not found';
-} else {
-    $title = $post['title'];
-    if (!$is_preview && !is_logged_in()) {
-        db()->prepare('UPDATE posts SET views = views + 1 WHERE id = ?')->execute(array($post['id']));
-    }
-}
+if ($is_preview && !is_logged_in()) $post = null;
+
+if (!$post) http_response_code(404);
+$title = $post ? $post['title'] : 'Not found';
+$post_url = $post ? site_url('/post.php?post=' . rawurlencode($post['slug'])) : site_url('/');
+$facebook_share_url = $post ? 'https://www.facebook.com/sharer/sharer.php?u=' . rawurlencode($post_url) : '';
 ?>
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title><?= e($title) ?> | <?= e(setting('site_title')) ?></title>
-<?php if ($post && !$is_preview): $post_url = site_url('/post.php?post=' . rawurlencode($post['slug'])); ?>
+<?php if ($post): ?>
 <meta name="description" content="<?= e($post['excerpt']) ?>">
 <link rel="canonical" href="<?= e($post_url) ?>">
 <meta property="og:type" content="article">
@@ -31,91 +27,74 @@ if (!$post || ($is_preview && !is_logged_in())) {
 <meta property="og:title" content="<?= e($post['title']) ?>">
 <meta property="og:description" content="<?= e($post['excerpt']) ?>">
 <meta property="og:url" content="<?= e($post_url) ?>">
+<meta property="og:image" content="<?= e(site_url(asset_path('/assets/og.png'))) ?>">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1730">
+<meta property="og:image:height" content="909">
+<meta property="og:image:alt" content="<?= e($post['title']) ?> — <?= e(setting('site_title')) ?>">
 <meta property="article:published_time" content="<?= e($post['published_at']) ?>">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="<?= e($post['title']) ?>">
+<meta name="twitter:description" content="<?= e($post['excerpt']) ?>">
+<meta name="twitter:image" content="<?= e(site_url(asset_path('/assets/og.png'))) ?>">
 <script type="application/ld+json"><?= json_encode(array(
-    '@context' => 'https://schema.org',
-    '@type' => 'Article',
-    'headline' => $post['title'],
-    'description' => $post['excerpt'],
-    'datePublished' => $post['published_at'],
-    'dateModified' => substr($post['updated_at'], 0, 10),
-    'mainEntityOfPage' => $post_url,
-    'author' => array('@type' => 'Person', 'name' => setting('author_name')),
-    'publisher' => array('@type' => 'Organization', 'name' => setting('site_title')),
+    '@context' => 'https://schema.org', '@type' => 'Article',
+    'headline' => $post['title'], 'description' => $post['excerpt'],
+    'datePublished' => $post['published_at'], 'dateModified' => $post['updated_at'],
+    'url' => $post_url, 'author' => array('@type' => 'Person', 'name' => setting('author_name')),
+    'publisher' => array('@type' => 'Organization', 'name' => setting('site_title'))
 ), JSON_UNESCAPED_SLASHES) ?></script>
 <?php endif; ?>
-<link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="<?= e(asset_path('/assets/site.css')) ?>">
 </head>
-<body>
-<header class="site-header">
-  <div class="wrap nav">
-    <div class="brand-block">
-      <a class="brand" href="/"><?= e(setting('brand_main')) ?> <span><?= e(setting('brand_accent')) ?></span></a>
-      <?php if (setting('brand_tagline') !== ''): ?>
-      <div class="tagline"><?= e(setting('brand_tagline')) ?></div>
-      <?php endif; ?>
+<body class="approved-design approved-reading-page">
+<header class="approved-header approved-reading-header">
+  <nav class="approved-nav shell" aria-label="Main navigation">
+    <a class="approved-brand" href="/" aria-label="<?= e(setting('site_title')) ?> home">
+      <span class="approved-brand-mark" aria-hidden="true">C</span>
+      <span><strong><?= e(setting('site_title')) ?></strong><small>Devotionals by <?= e(setting('author_name', 'Steve Febbraro')) ?></small></span>
+    </a>
+    <div class="approved-nav-links">
+      <a href="/#devotional">Devotional</a><a href="/#archive">Archive</a><a href="/#about">About</a><a href="/#newsletter">Newsletter</a>
     </div>
-    <nav class="nav-links">
-      <a href="/#devotionals">Devotionals</a>
-      <?php if (setting('substack_url') !== ''): ?>
-      <a href="<?= e(setting('substack_url')) ?>" target="_blank" rel="noopener">Essays &#8599;</a>
-      <?php endif; ?>
-      <a href="/#about">About</a>
-      <a href="/#archive">Archive</a>
-      <a class="desk" href="/desk/">Writing Desk</a>
-    </nav>
-  </div>
+    <a class="approved-admin-link" href="/desk/" aria-label="Open the private writing desk"><span>Writing desk</span></a>
+  </nav>
 </header>
 
-<main>
-<?php if (!$post || ($is_preview && !is_logged_in())): ?>
-  <div class="wrap page-hero">
-    <div class="eyebrow">Not found</div>
-    <h1 style="font-size:clamp(2.4rem,5vw,4rem)">That page has wandered off.</h1>
-    <p><a href="/">Return to the front page &rarr;</a></p>
-  </div>
+<?php if (!$post): ?>
+<main class="shell-narrow approved-not-found">
+  <p class="approved-eyebrow">Not found</p>
+  <h1>That page has wandered off.</h1>
+  <p><a class="approved-text-link" href="/">Return to the homepage &rarr;</a></p>
+</main>
 <?php else: ?>
-  <div class="wrap page-hero">
-    <div class="post-meta">
-      <?= e($post['category']) ?> &middot; <?= e(format_date($post['published_at'])) ?>
-      <?php if ($is_preview): ?> &middot; <span class="draft-flag">Draft preview</span><?php endif; ?>
+<main>
+  <article class="shell-narrow approved-reading-article">
+    <p class="approved-eyebrow"><?= e(format_date($post['published_at'])) ?> &middot; <?= reading_time_minutes($post['body']) ?> min read<?php if ($is_preview): ?> &middot; Draft preview<?php endif; ?></p>
+    <p class="approved-scripture-ref"><?= e($post['scripture'] !== '' ? $post['scripture'] : $post['category']) ?></p>
+    <h1><?= e($post['title']) ?></h1>
+    <p class="approved-reading-excerpt"><?= e($post['excerpt']) ?></p>
+    <div class="approved-reading-rule"><span>&#10022;</span></div>
+    <div class="approved-reading-body"><?= render_body($post['body']) ?></div>
+    <div class="approved-reading-footer">
+      <div class="approved-reading-actions">
+        <a class="approved-text-link" href="/">&larr; Back to the homepage</a>
+        <a class="approved-text-link" href="<?= e($facebook_share_url) ?>" target="_blank" rel="noopener">Share on Facebook <span aria-hidden="true">&#8599;</span></a>
+      </div>
+      <p>Soli Deo Gloria.</p>
     </div>
-    <h1 style="font-size:clamp(2.6rem,6vw,5rem)"><?= e($post['title']) ?></h1>
-    <p class="excerpt"><?= e($post['excerpt']) ?></p>
-  </div>
-  <article class="prose">
-    <?= render_body($post['body']) ?>
-    <hr>
-    <p><a href="/#archive">&larr; Back to all writing</a></p>
-    <?php if (setting('substack_url') !== ''): ?>
-    <p><a href="<?= e(setting('substack_url')) ?>" target="_blank" rel="noopener">Essays and longer writing live on Substack &#8599;</a></p>
-    <?php endif; ?>
   </article>
 
-  <section class="newsletter" id="subscribe">
-    <div class="wrap newsletter-inner">
+  <section class="approved-newsletter approved-reading-newsletter" id="newsletter">
+    <div class="shell approved-newsletter-inner">
+      <p class="approved-eyebrow">A devotional in your inbox</p>
       <h2><?= e(setting('newsletter_heading')) ?></h2>
-      <?php if (isset($_GET['subscribed'])): ?>
-        <p class="form-note"><strong>Thank you &mdash; you're on the list.</strong></p>
-      <?php else: ?>
-        <form class="email-form" method="post" action="/subscribe.php">
-          <?= csrf_field() ?>
-          <input type="hidden" name="return" value="/post.php?post=<?= e($post['slug']) ?>">
-          <input type="email" name="email" required placeholder="your@email.com" aria-label="Email address">
-          <button type="submit">Subscribe &rarr;</button>
-        </form>
-      <?php endif; ?>
+      <form class="approved-newsletter-form" method="post" action="/subscribe.php">
+        <?= csrf_field() ?><input type="email" name="email" required placeholder="Your email address" aria-label="Email address"><button type="submit">Join the newsletter</button>
+      </form>
     </div>
   </section>
-<?php endif; ?>
 </main>
-
-<footer class="site-footer">
-  <div class="wrap footer-inner">
-    <div>&copy; <?= e(setting('site_title')) ?> <span><?= date('Y') ?></span></div>
-    <div><?= e(setting('footer_note')) ?></div>
-  </div>
-</footer>
+<?php endif; ?>
 </body>
 </html>

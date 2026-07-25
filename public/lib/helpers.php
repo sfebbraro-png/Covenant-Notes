@@ -21,8 +21,18 @@ function save_setting($key, $value) {
 }
 
 function site_url($path = '') {
-    $base = rtrim(setting('site_url', 'https://covenantblog.us'), '/');
+    $base = rtrim(setting('site_url', 'https://thecovenantblog.org'), '/');
     return $base . $path;
+}
+
+function asset_path($path) {
+    static $versions = array();
+    $path = '/' . ltrim((string)$path, '/');
+    if (!isset($versions[$path])) {
+        $file = dirname(__DIR__) . $path;
+        $versions[$path] = is_file($file) ? substr(hash_file('sha256', $file), 0, 12) : '1';
+    }
+    return $path . '?v=' . $versions[$path];
 }
 
 function slugify($text) {
@@ -39,6 +49,25 @@ function format_date($ymd) {
 }
 
 /**
+ * Estimate reading length from the post body at 200 words per minute.
+ * Markdown formatting and link destinations are excluded from the count.
+ */
+function reading_word_count($text) {
+    $plain = (string)$text;
+    $plain = preg_replace('/\[([^\]]+)\]\([^)]+\)/u', '$1', $plain);
+    $plain = preg_replace('/(^|\n)\s*(?:-\s+|\d+\.\s+)/u', '$1', $plain);
+    $plain = preg_replace('/[*_+`#>]+/u', ' ', $plain);
+    $plain = strip_tags($plain);
+    $words = preg_split('/\s+/u', trim($plain), -1, PREG_SPLIT_NO_EMPTY);
+    return count($words);
+}
+
+function reading_time_minutes($text, $words_per_minute = 200) {
+    $word_count = reading_word_count($text);
+    return $word_count === 0 ? 0 : max(1, (int)ceil($word_count / $words_per_minute));
+}
+
+/**
  * Minimal markdown-style rendering for post bodies:
  * blank-line paragraphs, ## headings, > blockquotes, --- rules,
  * **bold**, *italic*, [text](url).
@@ -50,6 +79,23 @@ function render_body($text) {
         $block = trim($block);
         if ($block === '') continue;
         if ($block === '---') { $html .= "<hr>\n"; continue; }
+        $lines = explode("\n", $block);
+        $is_unordered = count($lines) > 0;
+        $is_ordered = count($lines) > 0;
+        foreach ($lines as $line) {
+            if (!preg_match('/^-\s+.+/', $line)) $is_unordered = false;
+            if (!preg_match('/^\d+\.\s+.+/', $line)) $is_ordered = false;
+        }
+        if ($is_unordered || $is_ordered) {
+            $tag = $is_unordered ? 'ul' : 'ol';
+            $html .= '<' . $tag . ">\n";
+            foreach ($lines as $line) {
+                $item = preg_replace($is_unordered ? '/^-\s+/' : '/^\d+\.\s+/', '', $line);
+                $html .= '<li>' . inline_format($item) . "</li>\n";
+            }
+            $html .= '</' . $tag . ">\n";
+            continue;
+        }
         if (strpos($block, '## ') === 0) {
             $html .= '<h2>' . inline_format(substr($block, 3)) . "</h2>\n";
         } elseif (strpos($block, '> ') === 0) {
@@ -65,10 +111,22 @@ function render_body($text) {
     return $html;
 }
 
+function render_body_preview($text, $paragraph_limit = 2) {
+    $blocks = preg_split("/\n\s*\n/", trim(str_replace("\r\n", "\n", (string)$text)));
+    $selected = array();
+    foreach ($blocks as $block) {
+        if (trim($block) === '') continue;
+        $selected[] = $block;
+        if (count($selected) >= $paragraph_limit) break;
+    }
+    return render_body(implode("\n\n", $selected));
+}
+
 function inline_format($text) {
     $text = e($text);
     $text = preg_replace('/\*\*(.+?)\*\*/s', '<strong>$1</strong>', $text);
     $text = preg_replace('/\*(.+?)\*/s', '<em>$1</em>', $text);
+    $text = preg_replace('/\+\+(.+?)\+\+/s', '<u>$1</u>', $text);
     $text = preg_replace_callback('/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/', function ($m) {
         return '<a href="' . $m[2] . '">' . $m[1] . '</a>';
     }, $text);

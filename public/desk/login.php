@@ -37,20 +37,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Writing Desk | <?= e(setting('site_title')) ?></title>
-<link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="<?= e(asset_path('/assets/site.css')) ?>">
 </head>
-<body class="desk-body">
-<div class="login-wrap">
-  <a class="brand" href="/" style="font-size:1.8rem"><?= e(setting('brand_main')) ?> <span><?= e(setting('brand_accent')) ?></span></a>
-  <div class="desk-card">
+<body class="desk-body approved-desk-login">
+<main class="approved-login-page">
+  <section class="approved-login-panel">
+    <a class="approved-brand" href="/"><span class="approved-brand-mark" aria-hidden="true">C</span><span><strong><?= e(setting('site_title')) ?></strong><small>Private writing desk</small></span></a>
+    <div class="approved-login-copy">
+      <p class="approved-eyebrow">Authorized access only</p>
     <?php if ($first_run): ?>
-      <h2>Welcome to your writing desk</h2>
+      <h1>Welcome to your<br>writing desk.</h1>
       <p>Before your first sign-in, choose the password you will use to manage the site.</p>
     <?php else: ?>
-      <h2>Sign in</h2>
+      <h1>Welcome back,<br>Steve.</h1>
+      <p>Enter your password to write devotionals or update the site.</p>
     <?php endif; ?>
+    </div>
     <?php if ($error): ?><div class="notice error"><?= e($error) ?></div><?php endif; ?>
-    <form method="post" style="margin-top:1.4rem">
+    <form method="post" class="approved-login-form">
       <?= csrf_field() ?>
       <div class="field">
         <label for="password"><?= $first_run ? 'Choose a password' : 'Password' ?></label>
@@ -62,9 +66,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <input type="password" id="confirm" name="confirm" required>
       </div>
       <?php endif; ?>
-      <button class="btn" type="submit"><?= $first_run ? 'Create password & enter' : 'Enter the desk' ?></button>
+      <button type="submit"><?= $first_run ? 'Create password & enter' : 'Enter writing desk →' ?></button>
     </form>
-  </div>
-</div>
+    <a class="approved-login-back" href="/">&larr; Back to the blog</a>
+  </section>
+  <section class="approved-login-verse"><blockquote>&ldquo;Your word is a lamp to my feet and a light to my path.&rdquo;</blockquote><p>Psalm 119:105</p></section>
+</main>
 </body>
 </html>

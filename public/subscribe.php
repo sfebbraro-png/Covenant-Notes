@@ -22,9 +22,12 @@ try {
 }
 
 // Forward to the newsletter service when an API key is configured.
-$api_key = setting('newsletter_api_key');
+$environment_key = getenv('BUTTONDOWN_API_KEY');
+$api_key = $environment_key !== false && trim($environment_key) !== ''
+    ? trim($environment_key)
+    : setting('newsletter_api_key');
 if ($api_key !== '') {
-    $ch = curl_init('https://api.buttondown.email/v1/subscribers');
+    $ch = curl_init('https://api.buttondown.com/v1/subscribers');
     curl_setopt_array($ch, array(
         CURLOPT_POST => true,
         CURLOPT_POSTFIELDS => json_encode(array('email_address' => $email)),

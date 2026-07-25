@@ -3,11 +3,8 @@ require_once __DIR__ . '/../lib/bootstrap.php';
 
 function desk_header($active, $title) {
     $tabs = array(
-        'index'       => array('index.php', 'Posts'),
-        'edit'        => array('edit.php', 'New post'),
-        'sections'    => array('sections.php', 'Site sections'),
-        'subscribers' => array('subscribers.php', 'Subscribers'),
-        'settings'    => array('settings.php', 'Settings'),
+        'index'       => array('index.php', 'Devotionals', '&#9998;'),
+        'sections'    => array('sections.php', 'Site sections', '&#9635;'),
     );
     ?>
 <!DOCTYPE html>
@@ -17,31 +14,29 @@ function desk_header($active, $title) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title><?= e($title) ?> | Writing Desk</title>
-<link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="<?= e(asset_path('/assets/site.css')) ?>">
 </head>
-<body class="desk-body">
-<header class="site-header">
-  <div class="wrap nav">
-    <a class="brand" href="/"><?= e(setting('brand_main')) ?> <span><?= e(setting('brand_accent')) ?></span></a>
-    <nav class="nav-links">
-      <a href="/">View site</a>
-      <a class="desk" href="logout.php">Sign out</a>
-    </nav>
-  </div>
-</header>
-<main class="desk-main">
-  <div class="eyebrow">The writing desk</div>
-  <h1 class="desk-title"><?= e($title) ?></h1>
-  <nav class="desk-nav">
+<body class="local-desk-body">
+<div class="local-settings-shell">
+  <aside class="local-admin-sidebar">
+    <a class="local-admin-brand" href="/">
+      <span class="local-admin-mark" aria-hidden="true">C</span>
+      <span><strong><?= e(setting('site_title')) ?></strong><small>Writing desk</small></span>
+    </a>
+    <nav aria-label="Writing desk navigation">
     <?php foreach ($tabs as $key => $tab): ?>
-      <a href="<?= e($tab[0]) ?>" class="<?= $key === $active ? 'active' : '' ?>"><?= e($tab[1]) ?></a>
+      <a href="<?= e($tab[0]) ?>" class="<?= $key === $active ? 'active' : '' ?>"><b aria-hidden="true"><?= $tab[2] ?></b><span><?= e($tab[1]) ?></span></a>
     <?php endforeach; ?>
-  </nav>
+    </nav>
+    <div class="local-admin-bottom"><a href="/" target="_blank">View live site &#8599;</a><a href="logout.php">Sign out</a></div>
+  </aside>
+  <main class="local-settings-panel">
+    <header class="local-settings-heading"><div><p class="local-eyebrow">Make it your own</p><h1><?= e($title) ?></h1></div><a class="local-square-button" href="index.php" aria-label="Devotionals">&#9998;</a></header>
     <?php
 }
 
 function desk_footer() {
-    echo '</main></body></html>';
+    echo '</main></div></body></html>';
 }
 
 function flash($msg = null) {

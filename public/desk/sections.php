@@ -73,6 +73,8 @@ flash();
 <div class="btn-row">
   <button class="btn" type="submit">Save all sections</button>
   <a class="btn ghost" href="/">View the site</a>
+  <a class="btn ghost" href="subscribers.php">Subscribers</a>
+  <a class="btn ghost" href="settings.php">Password &amp; newsletter settings</a>
 </div>
 </form>
 <?php desk_footer(); ?>

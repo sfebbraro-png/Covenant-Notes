@@ -39,6 +39,9 @@ if ($error) echo '<div class="notice error">' . e($error) . '</div>';
   <h2>Newsletter service</h2>
   <p>New subscribers are always stored on this site. Add your Buttondown API key and each new
      subscriber will also be created in your Buttondown account automatically.</p>
+  <?php if (getenv('BUTTONDOWN_API_KEY')): ?>
+    <div class="notice">Buttondown is securely configured through Railway. The private deployment setting takes precedence over the field below.</div>
+  <?php endif; ?>
   <form method="post">
     <?= csrf_field() ?>
     <div class="field">

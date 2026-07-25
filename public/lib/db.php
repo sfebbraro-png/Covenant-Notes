@@ -20,7 +20,35 @@ function db() {
     $pdo->exec('PRAGMA foreign_keys = ON');
 
     if ($fresh) db_init($pdo);
+    db_migrate($pdo);
     return $pdo;
+}
+
+/**
+ * Small, idempotent data corrections for existing persistent databases.
+ * These intentionally target only known legacy defaults and preserve anything
+ * the writer has customized in the desk.
+ */
+function db_migrate($pdo) {
+    $columns = array();
+    foreach ($pdo->query('PRAGMA table_info(posts)') as $column) $columns[] = $column['name'];
+    if (!in_array('scripture', $columns, true)) {
+        $pdo->exec("ALTER TABLE posts ADD COLUMN scripture TEXT NOT NULL DEFAULT ''");
+    }
+
+    $stmt = $pdo->prepare("UPDATE settings SET value = ? WHERE key = 'site_url' AND value IN (?, ?, ?)");
+    $stmt->execute(array(
+        'https://thecovenantblog.org',
+        'https://covenantblog.us',
+        'https://www.covenantblog.us',
+        'http://covenantblog.us',
+    ));
+
+    $stmt = $pdo->prepare("UPDATE settings SET value = ? WHERE key = 'brand_tagline' AND value = ?");
+    $stmt->execute(array(
+        '“The Bible is the school of the Holy Spirit.” — John Calvin',
+        '“Scripture is the school of the Holy Spirit” — John Calvin',
+    ));
 }
 
 function db_init($pdo) {
@@ -30,6 +58,7 @@ function db_init($pdo) {
             slug TEXT UNIQUE NOT NULL,
             title TEXT NOT NULL,
             category TEXT NOT NULL DEFAULT 'Essay',
+            scripture TEXT NOT NULL DEFAULT '',
             excerpt TEXT NOT NULL DEFAULT '',
             body TEXT NOT NULL DEFAULT '',
             status TEXT NOT NULL DEFAULT 'draft',
@@ -58,11 +87,11 @@ function db_init($pdo) {
 
     $settings = array(
         'site_title'         => 'The Covenant Blog',
-        'site_url'           => 'https://covenantblog.us',
+        'site_url'           => 'https://thecovenantblog.org',
         'author_name'        => 'Steve Febbraro',
         'brand_main'         => 'The Covenant',
         'brand_accent'       => 'Blog',
-        'brand_tagline'      => '“Scripture is the school of the Holy Spirit” — John Calvin',
+        'brand_tagline'      => '“The Bible is the school of the Holy Spirit.” — John Calvin',
         'meta_description'   => 'Thoughtful Christian writing on Scripture, culture, prayer, and the quiet work of becoming a people shaped by Christ.',
         'hero_eyebrow'       => 'Essays for ordinary faithfulness',
         'hero_title'         => "Rooted in grace.\nAttentive to life.",
