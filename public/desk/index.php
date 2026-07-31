@@ -21,6 +21,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $title = trim(isset($_POST['title']) ? $_POST['title'] : '');
+    $category = trim(isset($_POST['category']) ? $_POST['category'] : '');
+    $allowed = categories();
+    if (!in_array($category, $allowed, true)) {
+        // Keep whatever the post already had rather than silently recategorising it.
+        $category = $post ? $post['category'] : 'Devotional';
+    }
     $scripture = trim(isset($_POST['scripture']) ? $_POST['scripture'] : '');
     $date = trim(isset($_POST['published_at']) ? $_POST['published_at'] : date('Y-m-d'));
     $excerpt = trim(isset($_POST['excerpt']) ? $_POST['excerpt'] : '');
@@ -38,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $slug = $post ? $post['slug'] : slugify($title);
         if (!$post) {
-            $base = $slug === '' ? 'devotional' : $slug;
+            $base = $slug === '' ? strtolower($category) : $slug;
             $slug = $base;
             $n = 1;
             while (true) {
@@ -49,24 +55,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
         if ($post) {
-            db()->prepare("UPDATE posts SET title=?, category='Devotional', scripture=?, excerpt=?, body=?, status=?, published_at=?, updated_at=datetime('now') WHERE id=?")
-                ->execute(array($title, $scripture, $excerpt, $body, $status, $date, $post['id']));
+            db()->prepare("UPDATE posts SET title=?, category=?, scripture=?, excerpt=?, body=?, status=?, published_at=?, updated_at=datetime('now') WHERE id=?")
+                ->execute(array($title, $category, $scripture, $excerpt, $body, $status, $date, $post['id']));
             $id = (int)$post['id'];
         } else {
-            db()->prepare("INSERT INTO posts (slug,title,category,scripture,excerpt,body,status,published_at) VALUES (?,?,'Devotional',?,?,?,?,?)")
-                ->execute(array($slug, $title, $scripture, $excerpt, $body, $status, $date));
+            db()->prepare("INSERT INTO posts (slug,title,category,scripture,excerpt,body,status,published_at) VALUES (?,?,?,?,?,?,?,?)")
+                ->execute(array($slug, $title, $category, $scripture, $excerpt, $body, $status, $date));
             $id = (int)db()->lastInsertId();
         }
-        flash($status === 'published' ? 'Saved. This devotional is live.' : 'Saved as a draft.');
+        $noun = strtolower($category) === 'essay' ? 'essay' : 'devotional';
+        flash($status === 'published' ? 'Saved. This ' . $noun . ' is live.' : 'Saved as a draft.');
         redirect('index.php?id=' . $id);
     }
 }
 
 $posts = db()->query("SELECT * FROM posts ORDER BY status = 'draft' DESC, published_at DESC, id DESC")->fetchAll();
 $active = $post ?: array(
-    'id' => 0, 'title' => '', 'scripture' => '', 'excerpt' => '', 'body' => '',
+    'id' => 0, 'title' => '', 'category' => 'Devotional', 'scripture' => '', 'excerpt' => '', 'body' => '',
     'status' => 'draft', 'published_at' => date('Y-m-d'), 'slug' => ''
 );
+$active_noun = strtolower($active['category']) === 'essay' ? 'essay' : 'devotional';
 $flash_message = '';
 if (!empty($_SESSION['flash'])) { $flash_message = $_SESSION['flash']; unset($_SESSION['flash']); }
 ?>
@@ -76,7 +84,7 @@ if (!empty($_SESSION['flash'])) { $flash_message = $_SESSION['flash']; unset($_S
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Devotionals | Writing Desk</title>
+<title>Writing | Writing Desk</title>
 <link rel="stylesheet" href="<?= e(asset_path('/assets/site.css')) ?>">
 </head>
 <body class="local-desk-body">
@@ -87,7 +95,7 @@ if (!empty($_SESSION['flash'])) { $flash_message = $_SESSION['flash']; unset($_S
       <span><strong><?= e(setting('site_title')) ?></strong><small>Writing desk</small></span>
     </a>
     <nav>
-      <a class="active" href="index.php"><b aria-hidden="true">&#9998;</b><span>Devotionals</span></a>
+      <a class="active" href="index.php"><b aria-hidden="true">&#9998;</b><span>Writing</span></a>
       <a href="sections.php"><b aria-hidden="true">&#9635;</b><span>Site sections</span></a>
     </nav>
     <div class="local-admin-bottom"><a href="/" target="_blank">View live site &#8599;</a><a href="logout.php">Sign out</a></div>
@@ -95,14 +103,14 @@ if (!empty($_SESSION['flash'])) { $flash_message = $_SESSION['flash']; unset($_S
 
   <section class="local-post-library">
     <header class="local-library-heading">
-      <div><p class="local-eyebrow">Your library</p><h1>Devotionals</h1></div>
-      <a class="local-square-button" href="index.php" aria-label="New devotional">+</a>
+      <div><p class="local-eyebrow">Your library</p><h1>Writing</h1></div>
+      <a class="local-square-button" href="index.php" aria-label="Start something new">+</a>
     </header>
     <div class="local-post-list">
       <?php foreach ($posts as $item): ?>
       <a href="index.php?id=<?= (int)$item['id'] ?>" class="<?= (int)$active['id'] === (int)$item['id'] ? 'active' : '' ?>">
         <span class="local-status-dot <?= e($item['status']) ?>"></span>
-        <span><strong><?= e($item['title']) ?></strong><small><?= e($item['scripture'] !== '' ? $item['scripture'] : $item['category']) ?> &middot; <?= e($item['published_at']) ?></small></span>
+        <span><strong><?= e($item['title']) ?></strong><small><?= e($item['category']) ?><?php if ($item['scripture'] !== ''): ?> &middot; <?= e($item['scripture']) ?><?php endif; ?> &middot; <?= e($item['published_at']) ?></small></span>
       </a>
       <?php endforeach; ?>
     </div>
@@ -114,20 +122,25 @@ if (!empty($_SESSION['flash'])) { $flash_message = $_SESSION['flash']; unset($_S
       <header class="local-editor-topbar">
         <div><span class="local-status-badge <?= e($active['status']) ?>"><?= e($active['status']) ?></span><?php if ($flash_message): ?><span class="local-save-notice"><?= e($flash_message) ?></span><?php endif; ?><?php if ($error): ?><span class="local-save-notice error"><?= e($error) ?></span><?php endif; ?></div>
         <div>
-          <?php if ($active['id']): ?><button class="local-delete-button" type="submit" name="delete" value="1" onclick="return confirm('Delete this devotional permanently?')">Delete</button><?php endif; ?>
+          <?php if ($active['id']): ?><button class="local-delete-button" type="submit" name="delete" value="1" onclick="return confirm('Delete this <?= e($active_noun) ?> permanently?')">Delete</button><?php endif; ?>
           <button class="local-draft-button" type="submit" name="save_draft" value="1"><?= $active['status'] === 'published' ? 'Move to draft' : 'Save draft' ?></button>
-          <button class="local-save-button" type="submit" name="publish" value="1"><?= $active['status'] === 'published' ? 'Update published devotional' : 'Publish devotional' ?></button>
+          <button class="local-save-button" type="submit" name="publish" value="1"><?= $active['status'] === 'published' ? 'Update published ' . e($active_noun) : 'Publish ' . e($active_noun) ?></button>
         </div>
       </header>
       <div class="local-editor-fields">
-        <label class="local-title-field">Title<input name="title" required value="<?= e($active['title']) ?>" placeholder="Give this devotional a title"></label>
+        <label class="local-title-field">Title<input name="title" required value="<?= e($active['title']) ?>" placeholder="Give this piece a title"></label>
         <div class="local-field-row">
+          <label>Type<select name="category">
+            <?php foreach (categories() as $name): ?>
+            <option value="<?= e($name) ?>" <?= $name === $active['category'] ? 'selected' : '' ?>><?= e($name) ?></option>
+            <?php endforeach; ?>
+          </select></label>
           <label>Scripture<input name="scripture" value="<?= e($active['scripture']) ?>" placeholder="Romans 8:1"></label>
           <label>Publish date<input name="published_at" type="date" value="<?= e($active['published_at']) ?>"></label>
           <label>Read time<span class="local-read-time"><b id="read-time"><?= reading_time_minutes($active['body']) ?></b> min <small>(<span id="word-count"><?= reading_word_count($active['body']) ?></span> words)</small></span></label>
         </div>
         <label>Short introduction<textarea name="excerpt" rows="3" placeholder="A one-sentence introduction for archive cards."><?= e($active['excerpt']) ?></textarea></label>
-        <div class="local-editor-label">Devotional</div>
+        <div class="local-editor-label"><?= e($active['category']) ?></div>
         <div class="local-rich-editor">
           <div class="local-format-toolbar" role="toolbar" aria-label="Text formatting">
             <button type="button" data-wrap="**" title="Bold"><strong>B</strong></button>

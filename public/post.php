@@ -52,10 +52,10 @@ $facebook_share_url = $post ? 'https://www.facebook.com/sharer/sharer.php?u=' . 
   <nav class="approved-nav shell" aria-label="Main navigation">
     <a class="approved-brand" href="/" aria-label="<?= e(setting('site_title')) ?> home">
       <span class="approved-brand-mark" aria-hidden="true">C</span>
-      <span><strong><?= e(setting('site_title')) ?></strong><small>Devotionals by <?= e(setting('author_name', 'Steve Febbraro')) ?></small></span>
+      <span><strong><?= e(setting('site_title')) ?></strong><small>Devotions &amp; essays by <?= e(setting('author_name', 'Steve Febbraro')) ?></small></span>
     </a>
     <div class="approved-nav-links">
-      <a href="/#devotional">Devotional</a><a href="/#archive">Archive</a><a href="/#about">About</a><a href="/#newsletter">Newsletter</a>
+      <a href="/#devotional">Devotions / Essays</a><a href="/#archive">Archive</a><a href="/#about">About</a><a href="/#newsletter">Newsletter</a>
     </div>
     <a class="approved-admin-link" href="/desk/" aria-label="Open the private writing desk"><span>Writing desk</span></a>
   </nav>

@@ -9,6 +9,15 @@ foreach ($posts as $candidate) {
 }
 if (!$current && isset($posts[0])) $current = $posts[0];
 $archives = $posts;
+$devotional_count = 0;
+$essay_count = 0;
+foreach ($archives as $entry) {
+    if (strtolower($entry['category']) === 'essay') $essay_count++; else $devotional_count++;
+}
+$archive_counts = array();
+if ($devotional_count) $archive_counts[] = $devotional_count . ' ' . ($devotional_count === 1 ? 'devotional' : 'devotionals');
+if ($essay_count) $archive_counts[] = $essay_count . ' ' . ($essay_count === 1 ? 'essay' : 'essays');
+$archive_summary = $archive_counts ? implode(' · ', $archive_counts) . ' in the archive' : 'The archive is filling up.';
 $current_url = $current ? site_url('/post.php?post=' . rawurlencode($current['slug'])) : '';
 $current_facebook_url = $current_url !== '' ? 'https://www.facebook.com/sharer/sharer.php?u=' . rawurlencode($current_url) : '';
 
@@ -48,11 +57,11 @@ $sub_error = isset($_GET['sub_error']) ? $_GET['sub_error'] : '';
         <span class="approved-brand-mark" aria-hidden="true">C</span>
         <span>
           <strong><?= e(setting('site_title')) ?></strong>
-          <small>Devotionals by <?= e(setting('author_name', 'Steve Febbraro')) ?></small>
+          <small>Devotions &amp; essays by <?= e(setting('author_name', 'Steve Febbraro')) ?></small>
         </span>
       </a>
       <div class="approved-nav-links">
-        <a href="#devotional">Devotional</a>
+        <a href="#devotional">Devotions / Essays</a>
         <a href="#archive">Archive</a>
         <a href="#about">About</a>
         <a href="#newsletter">Newsletter</a>
@@ -106,7 +115,7 @@ $sub_error = isset($_GET['sub_error']) ? $_GET['sub_error'] : '';
         </div>
         <div class="approved-archive-heading-copy">
           <h2>Return to the Word,<br>again and again.</h2>
-          <p class="approved-archive-count"><?= count($archives) ?> <?= count($archives) === 1 ? 'devotional' : 'devotionals' ?> in the archive</p>
+          <p class="approved-archive-count"><?= e($archive_summary) ?></p>
         </div>
       </div>
       <?php if ($archives): ?>
@@ -128,7 +137,7 @@ $sub_error = isset($_GET['sub_error']) ? $_GET['sub_error'] : '';
         <?php endforeach; ?>
       </div>
       <?php else: ?>
-      <p class="approved-empty">More devotionals will appear here as they are published.</p>
+      <p class="approved-empty">More devotionals and essays will appear here as they are published.</p>
       <?php endif; ?>
     </div>
   </section>
@@ -150,7 +159,7 @@ $sub_error = isset($_GET['sub_error']) ? $_GET['sub_error'] : '';
     <div class="shell approved-substack-inner">
       <div>
         <p class="approved-eyebrow">Essays &amp; longer reads</p>
-        <h2>There&rsquo;s more<br>on Substack.</h2>
+        <h2><?= e(setting('substack_heading', 'Essays, here or on Substack.')) ?></h2>
         <a class="approved-home-link approved-light" href="#top">Back to homepage <span aria-hidden="true">&uarr;</span></a>
       </div>
       <div class="approved-substack-copy">
@@ -186,7 +195,7 @@ $sub_error = isset($_GET['sub_error']) ? $_GET['sub_error'] : '';
     <div class="shell approved-footer-inner">
       <div class="approved-brand approved-footer-brand">
         <span class="approved-brand-mark" aria-hidden="true">C</span>
-        <span><strong><?= e(setting('site_title')) ?></strong><small>Devotionals by <?= e(setting('author_name', 'Steve Febbraro')) ?></small></span>
+        <span><strong><?= e(setting('site_title')) ?></strong><small>Devotions &amp; essays by <?= e(setting('author_name', 'Steve Febbraro')) ?></small></span>
       </div>
       <p>&copy; <?= date('Y') ?> <?= e(setting('author_name', 'Steve Febbraro')) ?>. Soli Deo Gloria.</p>
       <div><a href="#about">About</a><a href="<?= e(setting('substack_url')) ?>" target="_blank" rel="noopener">Substack</a></div>

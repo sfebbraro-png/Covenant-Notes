@@ -3,7 +3,7 @@ require_once __DIR__ . '/../lib/bootstrap.php';
 
 function desk_header($active, $title) {
     $tabs = array(
-        'index'       => array('index.php', 'Devotionals', '&#9998;'),
+        'index'       => array('index.php', 'Writing', '&#9998;'),
         'sections'    => array('sections.php', 'Site sections', '&#9635;'),
     );
     ?>
@@ -31,7 +31,7 @@ function desk_header($active, $title) {
     <div class="local-admin-bottom"><a href="/" target="_blank">View live site &#8599;</a><a href="logout.php">Sign out</a></div>
   </aside>
   <main class="local-settings-panel">
-    <header class="local-settings-heading"><div><p class="local-eyebrow">Make it your own</p><h1><?= e($title) ?></h1></div><a class="local-square-button" href="index.php" aria-label="Devotionals">&#9998;</a></header>
+    <header class="local-settings-heading"><div><p class="local-eyebrow">Make it your own</p><h1><?= e($title) ?></h1></div><a class="local-square-button" href="index.php" aria-label="Writing">&#9998;</a></header>
     <?php
 }
 

@@ -474,7 +474,7 @@ h2{font-size:clamp(1.1rem,1.45vw,1.35rem)}
 .local-editor-fields input,.local-editor-fields textarea,.local-editor-fields select{display:block;width:100%;margin-top:8px;padding:12px 0;color:#14253d;background:transparent;border:0;border-bottom:1px solid #d8d1c3;outline:none;text-transform:none;letter-spacing:0}
 .local-title-field input{font:500 2.2rem Georgia,'Times New Roman',serif}
 .local-editor-fields textarea{padding:14px;border:1px solid #d8d1c3;background:#fff;resize:vertical}
-.local-field-row{display:grid;grid-template-columns:2fr 1.5fr 1fr;gap:20px}
+.local-field-row{display:grid;grid-template-columns:1.1fr 2fr 1.5fr 1fr;gap:20px}
 .local-read-time{display:block;min-height:48px;margin-top:8px;padding:13px 0;color:#14253d;border-bottom:1px solid #d8d1c3;font-size:.8rem;letter-spacing:0;text-transform:none}.local-read-time b{font-size:1rem}.local-read-time small{color:#637083;font-weight:400}
 .local-editor-label{margin-bottom:8px}
 .local-rich-editor{margin-bottom:25px;overflow:hidden;background:#fff;border:1px solid #d8d1c3}

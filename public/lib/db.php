@@ -44,6 +44,20 @@ function db_migrate($pdo) {
         'http://covenantblog.us',
     ));
 
+    // Essays are now published on the blog itself, so the Substack panel offers a
+    // choice rather than sending readers away. Only rewrites the untouched defaults.
+    $stmt = $pdo->prepare("UPDATE settings SET value = ? WHERE key = 'substack_heading' AND value = ?");
+    $stmt->execute(array(
+        'Essays, here or on Substack.',
+        'Essays live on Substack.',
+    ));
+
+    $stmt = $pdo->prepare("UPDATE settings SET value = ? WHERE key = 'substack_text' AND value = ?");
+    $stmt->execute(array(
+        'Essays are published right here on the blog, and they go out on Substack as well. Read them wherever you like it best.',
+        'The devotionals here are short by design. For essays and longer writing, join me on Substack.',
+    ));
+
     $stmt = $pdo->prepare("UPDATE settings SET value = ? WHERE key = 'brand_tagline' AND value = ?");
     $stmt->execute(array(
         '“The Bible is the school of the Holy Spirit.” — John Calvin',
@@ -101,8 +115,8 @@ function db_init($pdo) {
         'about_heading'      => 'For the church, and for the road.',
         'about_body'         => "I write for Christians who want to bring their whole lives under the kind and searching light of Scripture. Here you'll find essays that linger over ideas and short devotionals for ordinary mornings.\n\nMy theological home is in the Reformed tradition: convinced that grace is deeper than our striving, that the local church matters, and that the Word of God is sufficient for the life we have actually been given.",
         'substack_url'       => 'https://stevefebbraro.substack.com',
-        'substack_heading'   => 'Essays live on Substack.',
-        'substack_text'      => 'The devotionals here are short by design. For essays and longer writing, join me on Substack.',
+        'substack_heading'   => 'Essays, here or on Substack.',
+        'substack_text'      => 'Essays are published right here on the blog, and they go out on Substack as well. Read them wherever you like it best.',
         'newsletter_heading' => 'Receive new writing in your inbox.',
         'footer_note'        => 'Made for careful reading.',
         'newsletter_api_key' => '',
