@@ -1,5 +1,0 @@
-User-agent: *
-Disallow: /desk/
-Allow: /
-
-Sitemap: https://covenantblog.us/sitemap.php
