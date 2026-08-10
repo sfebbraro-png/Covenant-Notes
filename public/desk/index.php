@@ -28,6 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $category = $post ? $post['category'] : 'Devotional';
     }
     $scripture = trim(isset($_POST['scripture']) ? $_POST['scripture'] : '');
+    $seo_title = trim(isset($_POST['seo_title']) ? $_POST['seo_title'] : '');
     $date = trim(isset($_POST['published_at']) ? $_POST['published_at'] : date('Y-m-d'));
     $excerpt = trim(isset($_POST['excerpt']) ? $_POST['excerpt'] : '');
     $body = trim(isset($_POST['body']) ? $_POST['body'] : '');
@@ -55,12 +56,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
         if ($post) {
-            db()->prepare("UPDATE posts SET title=?, category=?, scripture=?, excerpt=?, body=?, status=?, published_at=?, updated_at=datetime('now') WHERE id=?")
-                ->execute(array($title, $category, $scripture, $excerpt, $body, $status, $date, $post['id']));
+            db()->prepare("UPDATE posts SET title=?, category=?, scripture=?, seo_title=?, excerpt=?, body=?, status=?, published_at=?, updated_at=datetime('now') WHERE id=?")
+                ->execute(array($title, $category, $scripture, $seo_title, $excerpt, $body, $status, $date, $post['id']));
             $id = (int)$post['id'];
         } else {
-            db()->prepare("INSERT INTO posts (slug,title,category,scripture,excerpt,body,status,published_at) VALUES (?,?,?,?,?,?,?,?)")
-                ->execute(array($slug, $title, $category, $scripture, $excerpt, $body, $status, $date));
+            db()->prepare("INSERT INTO posts (slug,title,category,scripture,seo_title,excerpt,body,status,published_at) VALUES (?,?,?,?,?,?,?,?,?)")
+                ->execute(array($slug, $title, $category, $scripture, $seo_title, $excerpt, $body, $status, $date));
             $id = (int)db()->lastInsertId();
         }
         $noun = strtolower($category) === 'essay' ? 'essay' : 'devotional';
@@ -71,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $posts = db()->query("SELECT * FROM posts ORDER BY status = 'draft' DESC, published_at DESC, id DESC")->fetchAll();
 $active = $post ?: array(
-    'id' => 0, 'title' => '', 'category' => 'Devotional', 'scripture' => '', 'excerpt' => '', 'body' => '',
+    'id' => 0, 'title' => '', 'category' => 'Devotional', 'scripture' => '', 'seo_title' => '', 'excerpt' => '', 'body' => '',
     'status' => 'draft', 'published_at' => date('Y-m-d'), 'slug' => ''
 );
 $active_noun = strtolower($active['category']) === 'essay' ? 'essay' : 'devotional';
@@ -140,6 +141,10 @@ if (!empty($_SESSION['flash'])) { $flash_message = $_SESSION['flash']; unset($_S
           <label>Read time<span class="local-read-time"><b id="read-time"><?= reading_time_minutes($active['body']) ?></b> min <small>(<span id="word-count"><?= reading_word_count($active['body']) ?></span> words)</small></span></label>
         </div>
         <label>Short introduction<textarea name="excerpt" rows="3" placeholder="A one-sentence introduction for archive cards."><?= e($active['excerpt']) ?></textarea></label>
+        <label>Search engine title <span class="local-field-note">Optional &middot; not shown on the site</span>
+          <input name="seo_title" maxlength="70" value="<?= e($active['seo_title']) ?>" placeholder="<?= e($active['title'] !== '' ? $active['title'] : 'Defaults to the title above') ?>">
+        </label>
+        <p class="local-field-hint">This is the headline Google shows in search results and the text in the browser tab. Readers never see it on the page. Leave it blank to use the title above. Aim for about 60 characters so it is not cut off.</p>
         <div class="local-editor-label"><?= e($active['category']) ?></div>
         <div class="local-rich-editor">
           <div class="local-format-toolbar" role="toolbar" aria-label="Text formatting">

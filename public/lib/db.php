@@ -35,6 +35,11 @@ function db_migrate($pdo) {
     if (!in_array('scripture', $columns, true)) {
         $pdo->exec("ALTER TABLE posts ADD COLUMN scripture TEXT NOT NULL DEFAULT ''");
     }
+    // Optional search-engine title. Never rendered on the page; falls back to
+    // the post title when left empty.
+    if (!in_array('seo_title', $columns, true)) {
+        $pdo->exec("ALTER TABLE posts ADD COLUMN seo_title TEXT NOT NULL DEFAULT ''");
+    }
 
     $stmt = $pdo->prepare("UPDATE settings SET value = ? WHERE key = 'site_url' AND value IN (?, ?, ?)");
     $stmt->execute(array(
@@ -73,6 +78,7 @@ function db_init($pdo) {
             title TEXT NOT NULL,
             category TEXT NOT NULL DEFAULT 'Essay',
             scripture TEXT NOT NULL DEFAULT '',
+            seo_title TEXT NOT NULL DEFAULT '',
             excerpt TEXT NOT NULL DEFAULT '',
             body TEXT NOT NULL DEFAULT '',
             status TEXT NOT NULL DEFAULT 'draft',

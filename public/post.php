@@ -10,6 +10,9 @@ if ($is_preview && !is_logged_in()) $post = null;
 
 if (!$post) http_response_code(404);
 $title = $post ? $post['title'] : 'Not found';
+// Search-engine title: an optional override for the <title> tag only. The
+// visible headline, share cards, and schema headline all keep the real title.
+$seo_title = $post && trim((string)$post['seo_title']) !== '' ? trim($post['seo_title']) : $title;
 $post_url = $post ? site_url('/post.php?post=' . rawurlencode($post['slug'])) : site_url('/');
 $facebook_share_url = $post ? 'https://www.facebook.com/sharer/sharer.php?u=' . rawurlencode($post_url) : '';
 ?>
@@ -18,7 +21,7 @@ $facebook_share_url = $post ? 'https://www.facebook.com/sharer/sharer.php?u=' . 
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title><?= e($title) ?> | <?= e(setting('site_title')) ?></title>
+<title><?= e($seo_title) ?> | <?= e(setting('site_title')) ?></title>
 <?php if ($post): ?>
 <meta name="description" content="<?= e($post['excerpt']) ?>">
 <link rel="canonical" href="<?= e($post_url) ?>">
