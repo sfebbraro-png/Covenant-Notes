@@ -29,7 +29,8 @@ $sub_error = isset($_GET['sub_error']) ? $_GET['sub_error'] : '';
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title><?= e(setting('site_title')) ?> | Essays &amp; Devotionals</title>
+<?php $home_seo_title = trim(setting('home_seo_title')); ?>
+<title><?= $home_seo_title !== '' ? e($home_seo_title) : e(setting('site_title')) . ' | Essays &amp; Devotionals' ?></title>
 <meta name="description" content="<?= e(setting('meta_description')) ?>">
 <link rel="canonical" href="<?= e(site_url('/')) ?>">
 <meta property="og:type" content="website">

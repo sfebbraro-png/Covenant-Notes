@@ -8,6 +8,7 @@ $fields = array(
         'brand_main'   => array('text', 'Brand — main part', 'The dark part of the logo text.'),
         'brand_accent' => array('text', 'Brand — accent part', 'The terracotta part of the logo text.'),
         'brand_tagline' => array('text', 'Tagline under the brand', 'Shown in italics beneath the site name. Leave blank to hide.'),
+        'home_seo_title' => array('text', 'Search engine title', 'The headline Google shows for the front page, and the browser tab text. Not shown anywhere on the site. Leave blank to use the site title followed by “Essays & Devotionals”. Aim for about 60 characters.'),
         'meta_description' => array('text', 'Search description', 'Shown by search engines under your site name.'),
         'site_url'     => array('text', 'Site address', 'The permanent https address search engines should index. Only change if the domain changes.'),
         'author_name'  => array('text', 'Author name', 'Used in the machine-readable article info search engines read.'),

@@ -112,6 +112,7 @@ function db_init($pdo) {
         'brand_main'         => 'The Covenant',
         'brand_accent'       => 'Blog',
         'brand_tagline'      => '“The Bible is the school of the Holy Spirit.” — John Calvin',
+        'home_seo_title'     => '',
         'meta_description'   => 'Thoughtful Christian writing on Scripture, culture, prayer, and the quiet work of becoming a people shaped by Christ.',
         'hero_eyebrow'       => 'Essays for ordinary faithfulness',
         'hero_title'         => "Rooted in grace.\nAttentive to life.",
