@@ -35,6 +35,18 @@ function asset_path($path) {
     return $path . '?v=' . $versions[$path];
 }
 
+/**
+ * Canonical location of a post: /the-slug, routed by router.php.
+ * The older /post.php?post=the-slug form still works and 301s here.
+ */
+function post_path($slug) {
+    return '/' . rawurlencode((string)$slug);
+}
+
+function post_url($slug) {
+    return site_url(post_path($slug));
+}
+
 function slugify($text) {
     $text = strtolower(trim($text));
     $text = preg_replace('/[\'"’‘”“]/u', '', $text);

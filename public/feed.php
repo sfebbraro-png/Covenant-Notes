@@ -18,8 +18,8 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
 <?php foreach ($posts as $p): ?>
   <item>
     <title><?= e($p['title']) ?></title>
-    <link><?= e($base) ?>/post.php?post=<?= e($p['slug']) ?></link>
-    <guid isPermaLink="true"><?= e($base) ?>/post.php?post=<?= e($p['slug']) ?></guid>
+    <link><?= e(post_url($p['slug'])) ?></link>
+    <guid isPermaLink="true"><?= e(post_url($p['slug'])) ?></guid>
     <pubDate><?= date(DATE_RSS, strtotime($p['published_at'])) ?></pubDate>
     <category><?= e($p['category']) ?></category>
     <description><?= e($p['excerpt']) ?></description>

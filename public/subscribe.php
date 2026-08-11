@@ -5,7 +5,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') redirect('/#subscribe');
 csrf_check();
 
 $return = '/';
-if (isset($_POST['return']) && strpos($_POST['return'], '/post.php?post=') === 0) {
+// Only ever return to a post on this site: the clean /the-slug form, or the
+// older query-string form. Anything else falls back to the homepage.
+if (isset($_POST['return'])
+    && (preg_match('#^/[a-z0-9][a-z0-9-]*$#', $_POST['return'])
+        || strpos($_POST['return'], '/post.php?post=') === 0)) {
     $return = $_POST['return'];
 }
 $sep = strpos($return, '?') === false ? '?' : '&';

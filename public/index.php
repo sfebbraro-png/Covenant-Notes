@@ -18,7 +18,7 @@ $archive_counts = array();
 if ($devotional_count) $archive_counts[] = $devotional_count . ' ' . ($devotional_count === 1 ? 'devotional' : 'devotionals');
 if ($essay_count) $archive_counts[] = $essay_count . ' ' . ($essay_count === 1 ? 'essay' : 'essays');
 $archive_summary = $archive_counts ? implode(' · ', $archive_counts) . ' in the archive' : 'The archive is filling up.';
-$current_url = $current ? site_url('/post.php?post=' . rawurlencode($current['slug'])) : '';
+$current_url = $current ? post_url($current['slug']) : '';
 $current_facebook_url = $current_url !== '' ? 'https://www.facebook.com/sharer/sharer.php?u=' . rawurlencode($current_url) : '';
 
 $subscribed = isset($_GET['subscribed']);
@@ -126,7 +126,7 @@ $sub_error = isset($_GET['sub_error']) ? $_GET['sub_error'] : '';
           <div class="approved-archive-index" aria-hidden="true"><?= str_pad((string)($index + 1), 2, '0', STR_PAD_LEFT) ?></div>
           <div class="approved-archive-copy">
             <p class="approved-scripture-ref"><?= e($post['scripture'] !== '' ? $post['scripture'] : $post['category']) ?></p>
-            <h3><a href="/post.php?post=<?= e($post['slug']) ?>"><?= e($post['title']) ?></a></h3>
+            <h3><a href="<?= e(post_path($post['slug'])) ?>"><?= e($post['title']) ?></a></h3>
             <p><?= e($post['excerpt']) ?></p>
           </div>
           <div class="approved-archive-meta">

@@ -13,7 +13,7 @@ $title = $post ? $post['title'] : 'Not found';
 // Search-engine title: an optional override for the <title> tag only. The
 // visible headline, share cards, and schema headline all keep the real title.
 $seo_title = $post && trim((string)$post['seo_title']) !== '' ? trim($post['seo_title']) : $title;
-$post_url = $post ? site_url('/post.php?post=' . rawurlencode($post['slug'])) : site_url('/');
+$post_url = $post ? post_url($post['slug']) : site_url('/');
 $facebook_share_url = $post ? 'https://www.facebook.com/sharer/sharer.php?u=' . rawurlencode($post_url) : '';
 ?>
 <!doctype html>

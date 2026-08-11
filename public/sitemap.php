@@ -14,7 +14,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
   </url>
 <?php foreach ($posts as $p): ?>
   <url>
-    <loc><?= e(site_url('/post.php?post=' . rawurlencode($p['slug']))) ?></loc>
+    <loc><?= e(post_url($p['slug'])) ?></loc>
     <lastmod><?= e(substr($p['updated_at'], 0, 10)) ?></lastmod>
   </url>
 <?php endforeach; ?>
