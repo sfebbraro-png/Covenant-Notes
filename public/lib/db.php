@@ -68,6 +68,52 @@ function db_migrate($pdo) {
         '“The Bible is the school of the Holy Spirit.” — John Calvin',
         '“Scripture is the school of the Holy Spirit” — John Calvin',
     ));
+
+    db_migrate_once($pdo, 'seo_titles_2026_08_10', 'db_apply_seo_titles');
+}
+
+/**
+ * Runs a named migration a single time, recording it in settings so the work
+ * does not repeat on every request the way the corrections above do.
+ */
+function db_migrate_once($pdo, $name, $callback) {
+    $key = 'migration_' . $name;
+    $stmt = $pdo->prepare('SELECT COUNT(*) FROM settings WHERE key = ?');
+    $stmt->execute(array($key));
+    if ($stmt->fetchColumn()) return;
+
+    call_user_func($callback, $pdo);
+
+    $stmt = $pdo->prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)');
+    $stmt->execute(array($key, date('c')));
+}
+
+/**
+ * Rewrites the search-engine titles. The originals were being truncated by
+ * Google, and three of them misattributed Scripture: Matthew 28:19 reads "all
+ * nations" not "all men", "do not be anxious about anything" is Philippians 4:6
+ * rather than Matthew 6:25, and the milk of Hebrews 5 is verse 12, not 11.
+ */
+function db_apply_seo_titles($pdo) {
+    $titles = array(
+        'turn-off-the-music'    => 'Is Worship Music Necessary in Church?',
+        'nobody-plows-alone'    => 'Matthew 11:28-30: What the Yoke Means',
+        'a-church-in-disgrace'  => 'What Happens After the Altar Call?',
+        'what-are-you-thinking' => 'Jeremiah 29:11 When Life Makes No Sense',
+        'knives-and-forks'      => 'Hebrews 5:12-14: From Milk to Meat',
+        'hard-verse-to-follow'  => 'Why Matthew 6:25 Is Hard to Believe',
+    );
+    $stmt = $pdo->prepare('UPDATE posts SET seo_title = ? WHERE slug = ?');
+    foreach ($titles as $slug => $seo_title) {
+        $stmt->execute(array($seo_title, $slug));
+    }
+
+    // Only fills the front page title if it has not been set by hand.
+    $current = $pdo->query("SELECT value FROM settings WHERE key = 'home_seo_title'")->fetchColumn();
+    if ($current === false || trim((string)$current) === '') {
+        $stmt = $pdo->prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)');
+        $stmt->execute(array('home_seo_title', 'The Covenant Blog — Reformed Devotionals & Essays'));
+    }
 }
 
 function db_init($pdo) {
