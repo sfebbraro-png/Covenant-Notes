@@ -3,11 +3,7 @@ require_once __DIR__ . '/lib/bootstrap.php';
 
 $posts = db()->query("SELECT * FROM posts WHERE status = 'published'
                       ORDER BY published_at DESC, id DESC")->fetchAll();
-$current = null;
-foreach ($posts as $candidate) {
-    if ($candidate['category'] === 'Devotional') { $current = $candidate; break; }
-}
-if (!$current && isset($posts[0])) $current = $posts[0];
+$current = isset($posts[0]) ? $posts[0] : null;
 $archives = $posts;
 $devotional_count = 0;
 $essay_count = 0;
