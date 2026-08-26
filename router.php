@@ -29,12 +29,26 @@ if ($path === '/sitemap.xml') {
     return true;
 }
 
+if ($path === '/about') {
+    require __DIR__ . '/public/about.php';
+    return true;
+}
+
 // Posts live at /the-slug. The old query-string form is kept working with a
 // 301 so existing links, shares, and anything Google already indexed survive.
 if ($path === '/post.php') {
     parse_str(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '', $query);
     if (!empty($query['post'])) {
         require_once __DIR__ . '/public/lib/bootstrap.php';
+        $legacy_stmt = db()->prepare("SELECT status FROM posts WHERE slug = ? LIMIT 1");
+        $legacy_stmt->execute(array($query['post']));
+        $legacy_post = $legacy_stmt->fetch();
+        if (!$legacy_post || $legacy_post['status'] !== 'published') {
+            http_response_code(410);
+            header('Content-Type: text/plain; charset=utf-8');
+            echo "Gone";
+            return true;
+        }
         $target = post_path($query['post']);
         unset($query['post']);
         if ($query) $target .= '?' . http_build_query($query);

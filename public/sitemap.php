@@ -12,6 +12,9 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
     <loc><?= e(site_url('/')) ?></loc>
     <?php if ($posts): ?><lastmod><?= e(substr($posts[0]['updated_at'], 0, 10)) ?></lastmod><?php endif; ?>
   </url>
+  <url>
+    <loc><?= e(site_url('/about')) ?></loc>
+  </url>
 <?php foreach ($posts as $p): ?>
   <url>
     <loc><?= e(post_url($p['slug'])) ?></loc>

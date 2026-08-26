@@ -266,7 +266,8 @@ h2{font-size:clamp(1.1rem,1.45vw,1.35rem)}
 .approved-hero-rule{position:absolute;top:0;left:50%;width:1px;height:70px;background:#b29a6a}
 .approved-hero-inner{min-height:570px;padding:105px 0 58px;display:flex;align-items:center;flex-direction:column;text-align:center}
 .approved-hero .approved-eyebrow{color:#d2c29e}
-.approved-hero blockquote{max-width:900px;margin:32px 0 18px;font:400 clamp(3rem,6.3vw,5.9rem)/.98 Georgia,'Times New Roman',serif;letter-spacing:-.045em}
+.approved-home-title{margin:26px 0 0;color:#f8f5ee;font:600 clamp(1.25rem,2.2vw,2rem)/1.2 Georgia,'Times New Roman',serif;letter-spacing:.04em}
+.approved-hero blockquote{max-width:900px;margin:20px 0 18px;font:400 clamp(3rem,6.3vw,5.9rem)/.98 Georgia,'Times New Roman',serif;letter-spacing:-.045em}
 .approved-quote-byline{margin:0;color:#d5cdbd;font:italic 1rem Georgia,'Times New Roman',serif}
 .approved-hero-link{margin-top:auto;color:#e7dfd0;font-size:.71rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
 .approved-hero-link span{color:#b29a6a;margin-left:8px}
@@ -281,7 +282,7 @@ h2{font-size:clamp(1.1rem,1.45vw,1.35rem)}
 .approved-devotional-meta{display:flex;align-items:center;gap:18px;color:#637083;font-size:.69rem;letter-spacing:.08em;text-transform:uppercase}
 .approved-devotional-meta span:before{content:"";display:inline-block;width:28px;height:1px;margin:0 18px 3px 0;background:#b29a6a}
 .approved-scripture-ref{margin:34px 0 14px;color:#7d2e38;font-size:.72rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
-.approved-devotional-card h1{max-width:700px;margin:0;font:500 clamp(2.5rem,5vw,4.6rem)/1.02 Georgia,'Times New Roman',serif;letter-spacing:-.045em}
+.approved-devotional-card h2{max-width:700px;margin:0;font:500 clamp(2.5rem,5vw,4.6rem)/1.02 Georgia,'Times New Roman',serif;letter-spacing:-.045em}
 .approved-devotional-lede{max-width:720px;margin:28px 0;color:#39475a;font:italic 1.35rem/1.6 Georgia,'Times New Roman',serif}
 .approved-devotional-body{max-width:720px;color:#3d4856;font:1.05rem/1.85 Georgia,'Times New Roman',serif}
 .approved-devotional-body p{margin:0 0 1em}
@@ -357,10 +358,22 @@ h2{font-size:clamp(1.1rem,1.45vw,1.35rem)}
 .approved-reading-body{color:#344154;font:1.08rem/1.78 Georgia,'Times New Roman',serif}
 .approved-reading-body p{margin:0 0 1.15em}
 .approved-reading-body p:first-child:first-letter{float:left;margin:6px 8px 0 0;color:#7d2e38;font-size:3.1rem;line-height:.82}
+.approved-related-reading{margin-top:58px;padding-top:34px;border-top:1px solid #d8d1c3}
+.approved-related-reading>h2{margin:8px 0 25px;font:500 2rem/1.15 Georgia,'Times New Roman',serif}
+.approved-related-list{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.approved-related-list article{position:relative;padding:22px;background:#f4f0e7;border:1px solid #e2dccf}
+.approved-related-list .approved-scripture-ref{margin:0 0 8px}
+.approved-related-list h3{margin:0;font:500 1.35rem/1.2 Georgia,'Times New Roman',serif}
+.approved-related-list h3 a:after{content:"";position:absolute;inset:0}
+.approved-related-list article>p:last-child{margin:10px 0 0;color:#637083;font:.92rem/1.5 Georgia,'Times New Roman',serif}
 .approved-reading-footer{margin-top:50px;padding-top:24px;border-top:1px solid #d8d1c3;display:flex;justify-content:space-between;align-items:center}
 .approved-reading-footer p{color:#7d2e38;font:italic 1rem Georgia,'Times New Roman',serif}
 .approved-reading-newsletter{padding-block:80px}
 .approved-not-found{min-height:65vh;padding-block:110px}.approved-not-found h1{font:500 clamp(3rem,7vw,5rem)/1 Georgia,'Times New Roman',serif}
+.approved-author-page{padding-block:85px 100px}
+.approved-author-page>h1{margin:10px 0 20px;font:500 clamp(3rem,7vw,5rem)/1 Georgia,'Times New Roman',serif;letter-spacing:-.04em}
+.approved-author-lede{max-width:660px;color:#637083;font:italic 1.25rem/1.65 Georgia,'Times New Roman',serif}
+.approved-author-body{color:#344154;font:1.08rem/1.78 Georgia,'Times New Roman',serif}
 
 @media(max-width:960px){
 .approved-nav-links{display:none}
@@ -373,13 +386,14 @@ h2{font-size:clamp(1.1rem,1.45vw,1.35rem)}
 .approved-nav{min-height:72px}.approved-admin-link{width:72px;flex-basis:72px}
 .approved-brand strong{font-size:.9rem}.approved-brand small{font-size:.48rem}.approved-brand-mark{width:38px;height:38px;flex-basis:38px}
 .approved-hero-inner{min-height:510px;padding-top:100px}.approved-hero blockquote{font-size:clamp(2.7rem,14vw,4.3rem)}.approved-desktop-break{display:none}
-.approved-current{display:block;padding-block:75px}.approved-section-intro{margin-bottom:40px}.approved-devotional-card{padding:0;border:0}.approved-devotional-card h1{font-size:2.65rem}
+.approved-current{display:block;padding-block:75px}.approved-section-intro{margin-bottom:40px}.approved-devotional-card{padding:0;border:0}.approved-devotional-card h2{font-size:2.65rem}
 .approved-archive{padding-block:70px}.approved-section-heading{display:block}.approved-section-heading h2{margin-top:25px}.approved-archive-heading-copy{display:block}.approved-archive-count{margin-top:16px}.approved-archive-row{padding:18px 0;grid-template-columns:32px minmax(0,1fr) 18px;grid-template-areas:"index copy arrow" ". meta arrow";gap:8px 14px}.approved-archive-meta{display:flex;gap:14px;text-align:left}.approved-archive-copy>p:not(.approved-scripture-ref){white-space:normal}.approved-archive-arrow{align-self:center}
 .approved-about{display:flex;flex-direction:column;padding-block:75px}.approved-about-portrait{width:100%;min-height:360px}.approved-about-copy h2{font-size:2.6rem}
 .approved-substack{padding-block:75px}.approved-substack-inner{display:block}.approved-substack-copy{margin-top:40px;padding:35px 0 0;border-left:0;border-top:1px solid rgba(255,255,255,.25)}
 .approved-newsletter{padding-block:80px}.approved-newsletter-form{grid-template-columns:1fr;gap:8px}.approved-newsletter-form button{width:100%}
 .approved-footer-inner{padding-block:45px;flex-direction:column;text-align:center}.approved-footer-inner>div:last-child{flex-wrap:wrap;justify-content:center}
 .approved-reading-article{padding-block:55px 70px}.approved-reading-footer{align-items:flex-start;flex-direction:column}.approved-devotional-share,.approved-reading-actions{align-items:flex-start;flex-direction:column;gap:0}
+.approved-related-list{grid-template-columns:1fr}
 }
 
 /* ---------- Approved Writing Desk ---------- */

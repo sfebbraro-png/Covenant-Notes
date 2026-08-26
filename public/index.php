@@ -43,6 +43,30 @@ $sub_error = isset($_GET['sub_error']) ? $_GET['sub_error'] : '';
 <meta name="twitter:title" content="<?= e(setting('site_title')) ?>">
 <meta name="twitter:description" content="<?= e(setting('meta_description')) ?>">
 <meta name="twitter:image" content="<?= e(site_url(asset_path('/assets/og.png'))) ?>">
+<script type="application/ld+json"><?= json_encode(array(
+    '@context' => 'https://schema.org',
+    '@graph' => array(
+        array(
+            '@type' => 'WebSite',
+            '@id' => site_url('/#website'),
+            'url' => site_url('/'),
+            'name' => setting('site_title'),
+            'description' => setting('meta_description'),
+            'publisher' => array('@id' => site_url('/#organization')),
+        ),
+        array(
+            '@type' => 'Organization',
+            '@id' => site_url('/#organization'),
+            'name' => setting('site_title'),
+            'url' => site_url('/'),
+            'logo' => array(
+                '@type' => 'ImageObject',
+                'url' => site_url(asset_path('/assets/covenant-blog-logo.png')),
+            ),
+            'sameAs' => array_values(array_filter(array(setting('substack_url')))),
+        ),
+    ),
+), JSON_UNESCAPED_SLASHES) ?></script>
 <link rel="alternate" type="application/rss+xml" title="<?= e(setting('site_title')) ?>" href="/feed.php">
 <link rel="stylesheet" href="<?= e(asset_path('/assets/site.css')) ?>">
 </head>
@@ -60,7 +84,7 @@ $sub_error = isset($_GET['sub_error']) ? $_GET['sub_error'] : '';
       <div class="approved-nav-links">
         <a href="#devotional">Devotions / Essays</a>
         <a href="#archive">Archive</a>
-        <a href="#about">About</a>
+        <a href="/about">About</a>
         <a href="#newsletter">Newsletter</a>
       </div>
       <a class="approved-admin-link" href="/desk/" aria-label="Open the private writing desk"><span>Writing desk</span></a>
@@ -71,6 +95,7 @@ $sub_error = isset($_GET['sub_error']) ? $_GET['sub_error'] : '';
     <div class="approved-hero-rule" aria-hidden="true"></div>
     <div class="shell approved-hero-inner">
       <p class="approved-eyebrow">Scripture &middot; Reflection &middot; Reformed Faith</p>
+      <h1 class="approved-home-title">Reformed Devotionals &amp; Christian Essays</h1>
       <blockquote>&ldquo;The Bible is the school<br class="approved-desktop-break"> of the Holy Spirit.&rdquo;</blockquote>
       <p class="approved-quote-byline">&mdash; John Calvin</p>
       <a class="approved-hero-link" href="#devotional">Read today&rsquo;s devotional <span aria-hidden="true">&darr;</span></a>
@@ -91,7 +116,7 @@ $sub_error = isset($_GET['sub_error']) ? $_GET['sub_error'] : '';
         <span><?= reading_time_minutes($current['body']) ?> min read</span>
       </div>
       <p class="approved-scripture-ref"><?= e($current['scripture'] !== '' ? $current['scripture'] : $current['category']) ?></p>
-      <h1><?= e($current['title']) ?></h1>
+      <h2><?= e($current['title']) ?></h2>
       <p class="approved-devotional-lede"><?= e($current['excerpt']) ?></p>
       <div class="approved-devotional-body"><?= render_body($current['body']) ?></div>
       <div class="approved-devotional-share">
@@ -147,6 +172,7 @@ $sub_error = isset($_GET['sub_error']) ? $_GET['sub_error'] : '';
       <h2><?= e(setting('about_heading')) ?></h2>
       <?= render_body(setting('about_body')) ?>
       <p class="approved-signature"><?= e(setting('author_name', 'Steve')) ?></p>
+      <a class="approved-text-link" href="/about">Read more about Steve <span aria-hidden="true">&rarr;</span></a>
       <a class="approved-home-link" href="#top">Back to homepage <span aria-hidden="true">&uarr;</span></a>
     </div>
   </section>
@@ -195,7 +221,7 @@ $sub_error = isset($_GET['sub_error']) ? $_GET['sub_error'] : '';
         <span><strong><?= e(setting('site_title')) ?></strong><small>Devotions &amp; essays by <?= e(setting('author_name', 'Steve Febbraro')) ?></small></span>
       </div>
       <p>&copy; <?= date('Y') ?> <?= e(setting('author_name', 'Steve Febbraro')) ?>. Soli Deo Gloria.</p>
-      <div><a href="#about">About</a><a href="<?= e(setting('substack_url')) ?>" target="_blank" rel="noopener">Substack</a></div>
+      <div><a href="/about">About</a><a href="<?= e(setting('substack_url')) ?>" target="_blank" rel="noopener">Substack</a></div>
     </div>
   </footer>
 </main>

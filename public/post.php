@@ -15,6 +15,16 @@ $title = $post ? $post['title'] : 'Not found';
 $seo_title = $post && trim((string)$post['seo_title']) !== '' ? trim($post['seo_title']) : $title;
 $post_url = $post ? post_url($post['slug']) : site_url('/');
 $facebook_share_url = $post ? 'https://www.facebook.com/sharer/sharer.php?u=' . rawurlencode($post_url) : '';
+$related_posts = array();
+if ($post && !$is_preview) {
+    $related_stmt = db()->prepare("SELECT title, slug, excerpt, category FROM posts
+        WHERE status = 'published' AND id <> ?
+        ORDER BY CASE WHEN category = ? THEN 0 ELSE 1 END, published_at DESC, id DESC
+        LIMIT 2");
+    $related_stmt->execute(array($post['id'], $post['category']));
+    $related_posts = $related_stmt->fetchAll();
+}
+$modified_iso = $post && $post['updated_at'] !== '' ? date(DATE_ATOM, strtotime($post['updated_at'])) : '';
 ?>
 <!doctype html>
 <html lang="en">
@@ -43,9 +53,22 @@ $facebook_share_url = $post ? 'https://www.facebook.com/sharer/sharer.php?u=' . 
 <script type="application/ld+json"><?= json_encode(array(
     '@context' => 'https://schema.org', '@type' => 'Article',
     'headline' => $post['title'], 'description' => $post['excerpt'],
-    'datePublished' => $post['published_at'], 'dateModified' => $post['updated_at'],
-    'url' => $post_url, 'author' => array('@type' => 'Person', 'name' => setting('author_name')),
-    'publisher' => array('@type' => 'Organization', 'name' => setting('site_title'))
+    'datePublished' => $post['published_at'], 'dateModified' => $modified_iso,
+    'url' => $post_url,
+    'mainEntityOfPage' => array('@type' => 'WebPage', '@id' => $post_url),
+    'image' => array(
+        '@type' => 'ImageObject',
+        'url' => site_url(asset_path('/assets/og.png')),
+        'width' => 1730,
+        'height' => 909,
+    ),
+    'author' => array('@type' => 'Person', 'name' => setting('author_name'), 'url' => site_url('/about')),
+    'publisher' => array(
+        '@type' => 'Organization',
+        'name' => setting('site_title'),
+        'url' => site_url('/'),
+        'logo' => array('@type' => 'ImageObject', 'url' => site_url(asset_path('/assets/covenant-blog-logo.png'))),
+    )
 ), JSON_UNESCAPED_SLASHES) ?></script>
 <?php endif; ?>
 <link rel="stylesheet" href="<?= e(asset_path('/assets/site.css')) ?>">
@@ -58,7 +81,7 @@ $facebook_share_url = $post ? 'https://www.facebook.com/sharer/sharer.php?u=' . 
       <span><strong><?= e(setting('site_title')) ?></strong><small>Devotions &amp; essays by <?= e(setting('author_name', 'Steve Febbraro')) ?></small></span>
     </a>
     <div class="approved-nav-links">
-      <a href="/#devotional">Devotions / Essays</a><a href="/#archive">Archive</a><a href="/#about">About</a><a href="/#newsletter">Newsletter</a>
+      <a href="/#devotional">Devotions / Essays</a><a href="/#archive">Archive</a><a href="/about">About</a><a href="/#newsletter">Newsletter</a>
     </div>
     <a class="approved-admin-link" href="/desk/" aria-label="Open the private writing desk"><span>Writing desk</span></a>
   </nav>
@@ -73,12 +96,27 @@ $facebook_share_url = $post ? 'https://www.facebook.com/sharer/sharer.php?u=' . 
 <?php else: ?>
 <main>
   <article class="shell-narrow approved-reading-article">
-    <p class="approved-eyebrow"><?= e(format_date($post['published_at'])) ?> &middot; <?= reading_time_minutes($post['body']) ?> min read<?php if ($is_preview): ?> &middot; Draft preview<?php endif; ?></p>
+    <p class="approved-eyebrow"><time datetime="<?= e($post['published_at']) ?>"><?= e(format_date($post['published_at'])) ?></time> &middot; <?= reading_time_minutes($post['body']) ?> min read<?php if ($is_preview): ?> &middot; Draft preview<?php endif; ?></p>
     <p class="approved-scripture-ref"><?= e($post['scripture'] !== '' ? $post['scripture'] : $post['category']) ?></p>
     <h1><?= e($post['title']) ?></h1>
     <p class="approved-reading-excerpt"><?= e($post['excerpt']) ?></p>
     <div class="approved-reading-rule"><span>&#10022;</span></div>
     <div class="approved-reading-body"><?= render_body($post['body']) ?></div>
+    <?php if ($related_posts): ?>
+    <section class="approved-related-reading" aria-labelledby="related-reading-heading">
+      <p class="approved-eyebrow">Continue reading</p>
+      <h2 id="related-reading-heading">Related essays and devotionals</h2>
+      <div class="approved-related-list">
+        <?php foreach ($related_posts as $related): ?>
+        <article>
+          <p class="approved-scripture-ref"><?= e($related['category']) ?></p>
+          <h3><a href="<?= e(post_path($related['slug'])) ?>"><?= e($related['title']) ?></a></h3>
+          <p><?= e($related['excerpt']) ?></p>
+        </article>
+        <?php endforeach; ?>
+      </div>
+    </section>
+    <?php endif; ?>
     <div class="approved-reading-footer">
       <div class="approved-reading-actions">
         <a class="approved-text-link" href="/">&larr; Back to the homepage</a>
