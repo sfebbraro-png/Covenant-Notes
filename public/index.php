@@ -23,6 +23,7 @@ $sub_error = isset($_GET['sub_error']) ? $_GET['sub_error'] : '';
 <!doctype html>
 <html lang="en">
 <head>
+<?php require __DIR__ . '/lib/google-analytics.php'; ?>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <?php $home_seo_title = trim(setting('home_seo_title')); ?>

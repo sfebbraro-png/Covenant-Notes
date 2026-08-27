@@ -9,6 +9,7 @@ $substack_url = setting('substack_url');
 <!doctype html>
 <html lang="en">
 <head>
+<?php require __DIR__ . '/lib/google-analytics.php'; ?>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>About <?= e($author_name) ?> | <?= e(setting('site_title')) ?></title>
