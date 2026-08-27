@@ -70,6 +70,7 @@ function db_migrate($pdo) {
     ));
 
     db_migrate_once($pdo, 'seo_titles_2026_08_10', 'db_apply_seo_titles');
+    db_migrate_once($pdo, 'seo_audit_2026_08_27', 'db_apply_seo_audit');
 }
 
 /**
@@ -114,6 +115,56 @@ function db_apply_seo_titles($pdo) {
         $stmt = $pdo->prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)');
         $stmt->execute(array('home_seo_title', 'The Covenant Blog — Reformed Devotionals & Essays'));
     }
+}
+
+/**
+ * On-page SEO audit: visible titles, search-engine titles, excerpts, and the
+ * homepage meta description. Updates by slug only; leaves slugs, body, and
+ * other columns untouched.
+ */
+function db_apply_seo_audit($pdo) {
+    $titles = array(
+        'the-armor-of-god' => 'The Armor of God Is Not a Cliche',
+        'stop-and-think'   => 'Count It Joy When Trouble Comes',
+    );
+    $stmt = $pdo->prepare('UPDATE posts SET title = ? WHERE slug = ?');
+    foreach ($titles as $slug => $title) {
+        $stmt->execute(array($title, $slug));
+    }
+
+    $seo_titles = array(
+        'there-is-no-switzerland-in-this-war'                      => 'Virginia 2026 Abortion Amendments',
+        'contentment'                                              => 'Hebrews 13:5 and True Contentment',
+        'how-strange-are-you'                                      => '1 Peter: Christians as Elect Exiles',
+        'the-megachurch'                                           => 'Is a Megachurch a Better Church?',
+        'the-god-who-works-through-ordinary-things-a-study-of-ruth'=> 'God’s Providence in the Book of Ruth',
+        'stop-and-think'                                           => 'James 1:2: Count It All Joy',
+        'the-armor-of-god'                                         => 'Ephesians 6: The Armor of God',
+        'nobody-plows-alone'                                       => 'Matthew 11:28: My Yoke Is Easy',
+        'what-are-you-thinking'                                    => 'Jeremiah 29:11: Life Makes No Sense',
+    );
+    $stmt = $pdo->prepare('UPDATE posts SET seo_title = ? WHERE slug = ?');
+    foreach ($seo_titles as $slug => $seo_title) {
+        $stmt->execute(array($seo_title, $slug));
+    }
+
+    $excerpts = array(
+        'there-is-no-switzerland-in-this-war' => 'A Christian case against Virginia’s 2026 abortion and marriage amendments, with voting dates and Scripture. Vote no on both questions.',
+        'contentment'                         => 'Hebrews 13:5 commands contentment, not complacency. Chasing more cannot satisfy. True rest is found in the God who will never leave you.',
+        'how-strange-are-you'                 => '1 Peter 1 calls Christians elect exiles. Holy conduct should look strange to the culture, even when nobody admires or understands it.',
+        'stop-and-think'                      => 'James 1:2 calls Christians to count trials as joy. God uses testing to produce steadfast faith, even when the hardship itself feels painful.',
+        'turn-off-the-music'                  => 'Would worship still be worship without music? This essay asks whether congregational singing serves the Word, or has become the main attraction.',
+    );
+    $stmt = $pdo->prepare('UPDATE posts SET excerpt = ? WHERE slug = ?');
+    foreach ($excerpts as $slug => $excerpt) {
+        $stmt->execute(array($excerpt, $slug));
+    }
+
+    $stmt = $pdo->prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)');
+    $stmt->execute(array(
+        'meta_description',
+        'Reformed essays and devotionals on Scripture, church, and ordinary faithfulness, written for Christians who want their whole lives under the Word.',
+    ));
 }
 
 function db_init($pdo) {
