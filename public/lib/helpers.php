@@ -171,3 +171,11 @@ function redirect($url) {
 function categories() {
     return db()->query('SELECT name FROM categories ORDER BY id')->fetchAll(PDO::FETCH_COLUMN);
 }
+
+function ga_measurement_id() {
+    $environment_id = getenv('GA_MEASUREMENT_ID');
+    if ($environment_id !== false && trim($environment_id) !== '') {
+        return trim($environment_id);
+    }
+    return 'G-9LV3DCMNB5';
+}

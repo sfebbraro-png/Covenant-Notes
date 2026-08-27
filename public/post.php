@@ -29,6 +29,7 @@ $modified_iso = $post && $post['updated_at'] !== '' ? date(DATE_ATOM, strtotime(
 <!doctype html>
 <html lang="en">
 <head>
+<?php require __DIR__ . '/lib/google-analytics.php'; ?>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title><?= e($seo_title) ?> | <?= e(setting('site_title')) ?></title>
