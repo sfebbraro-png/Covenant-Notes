@@ -71,6 +71,7 @@ function db_migrate($pdo) {
 
     db_migrate_once($pdo, 'seo_titles_2026_08_10', 'db_apply_seo_titles');
     db_migrate_once($pdo, 'seo_audit_2026_08_27', 'db_apply_seo_audit');
+    db_migrate_once($pdo, 'seo_audit_2026_08_30', 'db_apply_seo_audit_2026_08_30');
 }
 
 /**
@@ -165,6 +166,28 @@ function db_apply_seo_audit($pdo) {
         'meta_description',
         'Reformed essays and devotionals on Scripture, church, and ordinary faithfulness, written for Christians who want their whole lives under the Word.',
     ));
+}
+
+/**
+ * SEO metadata for a new post. Updates by slug only; leaves title, body, and
+ * other columns untouched.
+ */
+function db_apply_seo_audit_2026_08_30($pdo) {
+    $seo_titles = array(
+        'did-god-really-tell-you-that' => 'Does God Still Speak Today?',
+    );
+    $stmt = $pdo->prepare('UPDATE posts SET seo_title = ? WHERE slug = ?');
+    foreach ($seo_titles as $slug => $seo_title) {
+        $stmt->execute(array($seo_title, $slug));
+    }
+
+    $excerpts = array(
+        'did-god-really-tell-you-that' => 'Strong impressions are not the same as a word from God. Test your thoughts against Scripture, seek wisdom, and obey what He has already made clear.',
+    );
+    $stmt = $pdo->prepare('UPDATE posts SET excerpt = ? WHERE slug = ?');
+    foreach ($excerpts as $slug => $excerpt) {
+        $stmt->execute(array($excerpt, $slug));
+    }
 }
 
 function db_init($pdo) {
