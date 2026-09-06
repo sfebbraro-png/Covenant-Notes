@@ -72,6 +72,7 @@ function db_migrate($pdo) {
     db_migrate_once($pdo, 'seo_titles_2026_08_10', 'db_apply_seo_titles');
     db_migrate_once($pdo, 'seo_audit_2026_08_27', 'db_apply_seo_audit');
     db_migrate_once($pdo, 'seo_audit_2026_08_30', 'db_apply_seo_audit_2026_08_30');
+    db_migrate_once($pdo, 'seo_metadata_2026_09_06', 'db_apply_seo_metadata');
 }
 
 /**
@@ -119,6 +120,7 @@ function db_apply_seo_titles($pdo) {
 }
 
 /**
+<<<<<<< HEAD
  * On-page SEO audit: visible titles, search-engine titles, excerpts, and the
  * homepage meta description. Updates by slug only; leaves slugs, body, and
  * other columns untouched.
@@ -188,6 +190,29 @@ function db_apply_seo_audit_2026_08_30($pdo) {
     foreach ($excerpts as $slug => $excerpt) {
         $stmt->execute(array($excerpt, $slug));
     }
+}
+
+/**
+ * Keeps search snippets concise while preserving the article's visible title
+ * and excerpt on the page and in social previews.
+ */
+function db_apply_seo_metadata($pdo) {
+    $titles = array(
+        'christians-are-supposed-to-be-fat' => 'Christians Are Supposed to Be Fat | Spoon-Fed Faith',
+        'i-dont-know' => "I Don't Know | Faith in the Hospital Room",
+        'you-cant-know-yourself-until-you-know-god' => 'Know God, Know Yourself | Christian Wisdom',
+    );
+    $excerpts = array(
+        'i-dont-know' => 'When suffering leaves us asking why God allows it, the faithful answer may be “I don’t know”—and a reminder of God’s presence and mercy.',
+        'a-church-in-disgrace' => 'A church should measure ministry by faithful discipleship, not altar-call numbers. Jesus commands churches to teach and care for new believers.',
+        'what-are-you-thinking' => 'Jeremiah 29:11 does not promise an easy life. It points to God’s sovereign purposes and comfort when suffering leaves you asking what he is doing.',
+    );
+
+    $stmt = $pdo->prepare('UPDATE posts SET seo_title = ? WHERE slug = ?');
+    foreach ($titles as $slug => $seo_title) $stmt->execute(array($seo_title, $slug));
+
+    $stmt = $pdo->prepare('UPDATE posts SET excerpt = ? WHERE slug = ?');
+    foreach ($excerpts as $slug => $excerpt) $stmt->execute(array($excerpt, $slug));
 }
 
 function db_init($pdo) {
