@@ -73,6 +73,7 @@ function db_migrate($pdo) {
     db_migrate_once($pdo, 'seo_audit_2026_08_27', 'db_apply_seo_audit');
     db_migrate_once($pdo, 'seo_audit_2026_08_30', 'db_apply_seo_audit_2026_08_30');
     db_migrate_once($pdo, 'seo_metadata_2026_09_06', 'db_apply_seo_metadata');
+    db_migrate_once($pdo, 'seo_titles_2026_09_06b', 'db_apply_seo_titles_2026_09_06b');
 }
 
 /**
@@ -213,6 +214,16 @@ function db_apply_seo_metadata($pdo) {
 
     $stmt = $pdo->prepare('UPDATE posts SET excerpt = ? WHERE slug = ?');
     foreach ($excerpts as $slug => $excerpt) $stmt->execute(array($excerpt, $slug));
+}
+
+function db_apply_seo_titles_2026_09_06b($pdo) {
+    $titles = array(
+        'christians-are-supposed-to-be-fat' => 'Christians and Spoon-Fed Faith',
+        'i-dont-know' => "I Don't Know: Faith in Suffering",
+        'you-cant-know-yourself-until-you-know-god' => 'Know God, Know Yourself',
+    );
+    $stmt = $pdo->prepare('UPDATE posts SET seo_title = ? WHERE slug = ?');
+    foreach ($titles as $slug => $seo_title) $stmt->execute(array($seo_title, $slug));
 }
 
 function db_init($pdo) {
