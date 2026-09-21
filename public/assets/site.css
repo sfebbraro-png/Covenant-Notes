@@ -368,6 +368,10 @@ h2{font-size:clamp(1.1rem,1.45vw,1.35rem)}
 .approved-related-list article>p:last-child{margin:10px 0 0;color:#637083;font:.92rem/1.5 Georgia,'Times New Roman',serif}
 .approved-reading-footer{margin-top:50px;padding-top:24px;border-top:1px solid #d8d1c3;display:flex;justify-content:space-between;align-items:center}
 .approved-reading-footer p{color:#7d2e38;font:italic 1rem Georgia,'Times New Roman',serif}
+.approved-post-footer{margin-top:22px;color:#637083;font:.92rem/1.6 Georgia,'Times New Roman',serif}
+.approved-post-footer p{margin:0}
+.approved-post-footer a{color:#102540;text-decoration:none;border-bottom:1px solid #b29a6a}
+.approved-post-footer a:hover{border-bottom-color:#102540}
 .approved-reading-newsletter{padding-block:80px}
 .approved-not-found{min-height:65vh;padding-block:110px}.approved-not-found h1{font:500 clamp(3rem,7vw,5rem)/1 Georgia,'Times New Roman',serif}
 .approved-author-page{padding-block:85px 100px}

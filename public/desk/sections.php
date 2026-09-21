@@ -32,6 +32,7 @@ $fields = array(
     'Newsletter & footer' => array(
         'newsletter_heading' => array('text', 'Newsletter heading', ''),
         'footer_note'        => array('text', 'Footer note', ''),
+        'post_footer'        => array('textarea-small', 'Post footer', 'Shown at the end of every public post, after “Soli Deo Gloria.” HTML links allowed. Leave blank to hide.'),
     ),
 );
 

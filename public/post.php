@@ -125,6 +125,9 @@ $modified_iso = $post && $post['updated_at'] !== '' ? date(DATE_ATOM, strtotime(
       </div>
       <p>Soli Deo Gloria.</p>
     </div>
+    <?php if (trim(setting('post_footer')) !== ''): ?>
+    <div class="approved-post-footer"><?= setting('post_footer') ?></div>
+    <?php endif; ?>
   </article>
 
   <section class="approved-newsletter approved-reading-newsletter" id="newsletter">

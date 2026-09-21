@@ -282,6 +282,7 @@ function db_init($pdo) {
         'substack_text'      => 'Essays are published right here on the blog, and they go out on Substack as well. Read them wherever you like it best.',
         'newsletter_heading' => 'Receive new writing in your inbox.',
         'footer_note'        => 'Made for careful reading.',
+        'post_footer'        => '',
         'newsletter_api_key' => '',
         'admin_password_hash'=> '',
     );
