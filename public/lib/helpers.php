@@ -145,6 +145,21 @@ function inline_format($text) {
     return $text;
 }
 
+/**
+ * Escape plain text and turn bare http(s) URLs into clickable links.
+ * Used for short fields like the post footer, which are entered as
+ * plain text in the writing desk.
+ */
+function linkify($text) {
+    $text = e($text);
+    return preg_replace_callback('/https?:\/\/[^\s<>"\']+/u', function ($m) {
+        $url = $m[0];
+        $trimmed = rtrim($url, '.,;:!?)]}');
+        $trail = substr($url, strlen($trimmed));
+        return '<a href="' . $trimmed . '">' . $trimmed . '</a>' . e($trail);
+    }, $text);
+}
+
 function csrf_token() {
     if (empty($_SESSION['csrf'])) {
         $_SESSION['csrf'] = bin2hex(random_bytes(20));
