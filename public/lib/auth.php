@@ -5,7 +5,7 @@ function is_logged_in() {
 }
 
 function require_login() {
-    if (!is_logged_in()) redirect('login.php');
+    if (!is_logged_in()) redirect('/desk/login.php');
 }
 
 function password_is_set() {
