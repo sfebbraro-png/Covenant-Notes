@@ -60,6 +60,18 @@ $substack_url = setting('substack_url');
     </figure>
     <div class="approved-reading-rule"><span>&#10022;</span></div>
     <div class="approved-author-body"><?= render_body(setting('about_body')) ?></div>
+    <section class="approved-books approved-books-about">
+      <p class="approved-eyebrow">Books by Steve</p>
+      <h2 class="approved-books-title">Eight books on the Christian life</h2>
+      <div class="approved-books-grid">
+        <img src="<?= e(asset_path('/assets/book-eight-essays.jpg')) ?>" alt="Cover of Eight Essays on the Christian Life by Steve Febbraro" loading="lazy">
+        <img src="<?= e(asset_path('/assets/book-1-peter.jpg')) ?>" alt="Cover of 1 Peter: Living Stones, Living Hope by Steve Febbraro" loading="lazy">
+        <img src="<?= e(asset_path('/assets/book-fear-final-word.jpg')) ?>" alt="Cover of Fear Didn't Get the Final Word by Steve Febbraro" loading="lazy">
+        <img src="<?= e(asset_path('/assets/book-the-bible-is-upside-down.jpg')) ?>" alt="Cover of The Bible Is Upside Down by Steve Febbraro" loading="lazy">
+      </div>
+      <p class="approved-books-text">Steve Febbraro is the author of eight books on the Christian life, including Eight Essays on the Christian Life and The Lord Is My Shepherd, free in ebook.</p>
+      <a class="approved-books-button" href="https://www.amazon.com/stores/author/B0HJ7L22ZV/allbooks" target="_blank" rel="noopener">See all 8 books on Amazon</a>
+    </section>
     <?php if ($substack_url !== ''): ?>
     <p><a class="approved-text-link" href="<?= e($substack_url) ?>" target="_blank" rel="noopener">Read Steve&rsquo;s Substack <span aria-hidden="true">&#8599;</span></a></p>
     <?php endif; ?>

@@ -128,6 +128,7 @@ $modified_iso = $post && $post['updated_at'] !== '' ? date(DATE_ATOM, strtotime(
     <?php if (trim(setting('post_footer')) !== ''): ?>
     <div class="approved-post-footer"><?= linkify(setting('post_footer')) ?></div>
     <?php endif; ?>
+    <p style="margin-top:18px"><a class="approved-books-button" href="https://www.amazon.com/stores/author/B0HJ7L22ZV/allbooks" target="_blank" rel="noopener">See all 8 books on Amazon</a></p>
   </article>
 
   <section class="approved-newsletter approved-reading-newsletter" id="newsletter">
