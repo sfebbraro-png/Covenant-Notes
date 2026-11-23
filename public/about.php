@@ -87,7 +87,7 @@ $substack_url = setting('substack_url');
       <p class="approved-eyebrow">A devotional in your inbox</p>
       <h2><?= e(setting('newsletter_heading')) ?></h2>
       <form class="approved-newsletter-form" method="post" action="/subscribe.php">
-        <?= csrf_field() ?><input type="email" name="email" required placeholder="Your email address" aria-label="Email address"><button type="submit">Join the newsletter</button>
+        <?= csrf_field() ?><label class="approved-newsletter-label" for="newsletter-email">Email address</label><input id="newsletter-email" type="email" name="email" required placeholder="Your email address" aria-label="Email address"><button type="submit">Join the newsletter</button>
       </form>
     </div>
   </section>
