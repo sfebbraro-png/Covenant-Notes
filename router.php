@@ -34,6 +34,17 @@ if ($path === '/about') {
     return true;
 }
 
+// Archive-style addresses from other platforms (/category/..., /tag/...,
+// /author/..., /page/...) have no meaning here. They used to fall through to
+// the homepage with a 200, which search engines treat as a soft 404. Send
+// them to the same not-found page as any other unknown address.
+if (preg_match('#^/(?:category|tag|author|page)(?:/|$)#', $path)) {
+    $_GET['post'] = '';
+    $_REQUEST['post'] = '';
+    require __DIR__ . '/public/post.php';
+    return true;
+}
+
 // Posts live at /the-slug. The old query-string form is kept working with a
 // 301 so existing links, shares, and anything Google already indexed survive.
 if ($path === '/post.php') {
