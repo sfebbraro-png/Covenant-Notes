@@ -226,7 +226,8 @@ $sub_error = isset($_GET['sub_error']) ? $_GET['sub_error'] : '';
       <?php else: ?>
         <form class="approved-newsletter-form" method="post" action="/subscribe.php">
           <?= csrf_field() ?>
-          <input type="email" name="email" required placeholder="Your email address" aria-label="Email address">
+          <label class="approved-newsletter-label" for="newsletter-email">Email address</label>
+          <input id="newsletter-email" type="email" name="email" required placeholder="Your email address" aria-label="Email address">
           <button type="submit">Join the newsletter</button>
         </form>
       <?php endif; ?>
