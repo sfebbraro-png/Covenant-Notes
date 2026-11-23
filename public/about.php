@@ -55,6 +55,9 @@ $substack_url = setting('substack_url');
     <p class="approved-eyebrow">About the writer</p>
     <h1><?= e($author_name) ?></h1>
     <p class="approved-author-lede">Reformed Christian essays and devotionals for readers who want to bring ordinary life under the searching light of Scripture.</p>
+    <figure style="margin:36px 0 6px">
+      <img src="<?= e(asset_path('/assets/steve-febbraro.jpg')) ?>" alt="Portrait of <?= e($author_name) ?>" width="600" height="600" style="display:block;width:min(260px,72vw);height:auto;border-radius:18px;box-shadow:0 18px 45px rgba(16,37,64,.16)">
+    </figure>
     <div class="approved-reading-rule"><span>&#10022;</span></div>
     <div class="approved-author-body"><?= render_body(setting('about_body')) ?></div>
     <?php if ($substack_url !== ''): ?>
@@ -62,6 +65,16 @@ $substack_url = setting('substack_url');
     <?php endif; ?>
     <p><a class="approved-text-link" href="/">&larr; Back to the homepage</a></p>
   </article>
+
+  <section class="approved-newsletter approved-reading-newsletter" id="newsletter">
+    <div class="shell approved-newsletter-inner">
+      <p class="approved-eyebrow">A devotional in your inbox</p>
+      <h2><?= e(setting('newsletter_heading')) ?></h2>
+      <form class="approved-newsletter-form" method="post" action="/subscribe.php">
+        <?= csrf_field() ?><input type="email" name="email" required placeholder="Your email address" aria-label="Email address"><button type="submit">Join the newsletter</button>
+      </form>
+    </div>
+  </section>
 </main>
 </body>
 </html>
