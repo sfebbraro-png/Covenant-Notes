@@ -13,6 +13,12 @@ if (strpos($host, 'www.') === 0) {
     return true;
 }
 
+// Compress page output for browsers that accept gzip. Static files are
+// handled separately below and opt out of this buffer before they are served.
+if (extension_loaded('zlib') && !ini_get('zlib.output_compression')) {
+    ob_start('ob_gzhandler');
+}
+
 // The SQLite volume is mounted beneath the document root, and lib/ holds the
 // application internals. Neither should ever be reachable over HTTP.
 if (preg_match('#^/(?:data|lib)(?:/|$)#', $path) || preg_match('#/(?:\.|%2e)#i', $path)) {
@@ -95,4 +101,52 @@ if ($path === '/robots.txt') {
     return true;
 }
 
+// Static files (the stylesheet, images, the favicon) get a 30-day cache
+// lifetime, and text formats get gzip. Templates build asset addresses with
+// a content fingerprint (?v=...), so a changed file gets a fresh address
+// and the long lifetime cannot serve a stale copy. Pages are never cached
+// here; only these files are.
+if (preg_match('#^/(?:assets/.+|favicon\.ico)$#', $path)) {
+    $asset_file = __DIR__ . '/public' . $path;
+    $asset_types = array(
+        'css' => 'text/css; charset=utf-8',
+        'js' => 'text/javascript; charset=utf-8',
+        'png' => 'image/png',
+        'jpg' => 'image/jpeg',
+        'jpeg' => 'image/jpeg',
+        'gif' => 'image/gif',
+        'svg' => 'image/svg+xml',
+        'ico' => 'image/x-icon',
+        'webp' => 'image/webp',
+        'woff2' => 'font/woff2',
+    );
+    $asset_ext = strtolower(pathinfo($asset_file, PATHINFO_EXTENSION));
+    if (is_file($asset_file) && isset($asset_types[$asset_ext])) {
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+        $asset_data = file_get_contents($asset_file);
+        header('Content-Type: ' . $asset_types[$asset_ext]);
+        header('Cache-Control: public, max-age=2592000');
+        header('Vary: Accept-Encoding');
+        if (in_array($asset_ext, array('css', 'js', 'svg'), true)
+            && isset($_SERVER['HTTP_ACCEPT_ENCODING'])
+            && strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false) {
+            $asset_data = gzencode($asset_data, 6);
+            header('Content-Encoding: gzip');
+        }
+        header('Content-Length: ' . strlen($asset_data));
+        if ($_SERVER['REQUEST_METHOD'] !== 'HEAD') {
+            echo $asset_data;
+        }
+        return true;
+    }
+}
+
+// Anything else that reaches here is a real file the built-in server should
+// serve itself (desk pages and their assets). Drop the gzip buffer so the
+// server's own response is untouched.
+while (ob_get_level() > 0) {
+    ob_end_clean();
+}
 return false;
