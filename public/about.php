@@ -32,7 +32,8 @@ $substack_url = setting('substack_url');
     'name' => $author_name,
     'url' => $about_url,
     'description' => $about_description,
-    'sameAs' => array_values(array_filter(array($substack_url))),
+    'image' => site_url(asset_path('/assets/steve-febbraro.jpg')),
+    'sameAs' => array_values(array_filter(array($substack_url, 'https://www.amazon.com/stores/author/B0HJ7L22ZV/allbooks'))),
 ), JSON_UNESCAPED_SLASHES) ?></script>
 <link rel="stylesheet" href="<?= e(asset_path('/assets/site.css')) ?>">
 <link rel="icon" href="/favicon.ico" sizes="any">
