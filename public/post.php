@@ -73,6 +73,10 @@ $modified_iso = $post && $post['updated_at'] !== '' ? date(DATE_ATOM, strtotime(
 ), JSON_UNESCAPED_SLASHES) ?></script>
 <?php endif; ?>
 <link rel="stylesheet" href="<?= e(asset_path('/assets/site.css')) ?>">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
 </head>
 <body class="approved-design approved-reading-page">
 <header class="approved-header approved-reading-header">
