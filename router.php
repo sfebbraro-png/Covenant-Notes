@@ -35,6 +35,19 @@ if ($path === '/sitemap.xml') {
     return true;
 }
 
+// The homepage and the feed are files the built-in server would serve by
+// itself, which bypasses the gzip buffer above. Route them through here so
+// they are compressed like every other page.
+if ($path === '/' || $path === '/index.php') {
+    require __DIR__ . '/public/index.php';
+    return true;
+}
+
+if ($path === '/feed.php') {
+    require __DIR__ . '/public/feed.php';
+    return true;
+}
+
 if ($path === '/about') {
     require __DIR__ . '/public/about.php';
     return true;
