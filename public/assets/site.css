@@ -521,3 +521,4 @@ h2{font-size:clamp(1.1rem,1.45vw,1.35rem)}
 .approved-books-about .approved-books-grid{justify-content:flex-start;margin:0 0 22px}
 .approved-books-about .approved-books-text{margin:0 0 22px}
 @media(max-width:700px){.approved-books-grid img{width:42vw;max-width:170px}}
+.approved-newsletter-label{grid-column:1/-1;margin-bottom:8px;color:#4a5260;font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
