@@ -4,7 +4,9 @@ require_once __DIR__ . '/lib/bootstrap.php';
 $posts = db()->query("SELECT * FROM posts WHERE status = 'published'
                       ORDER BY published_at DESC, id DESC")->fetchAll();
 $current = isset($posts[0]) ? $posts[0] : null;
-$archives = $posts;
+// The newest post already appears in full as today's devotional above, so
+// the archive list starts with the second-newest to avoid showing it twice.
+$archives = array_slice($posts, 1);
 $devotional_count = 0;
 $essay_count = 0;
 foreach ($archives as $entry) {
